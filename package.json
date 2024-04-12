@@ -1,0 +1,33 @@
+{
+  "name": "rabbitmq-hooks",
+  "version": "0.0.1",
+  "main": "index.js",
+  "bin": {
+    "create-rabbitmq-hooks": "./cli/create.js",
+    "start-rabbitmq-hooks": "./cli/start.js"
+  },
+  "scripts": {
+    "gen-schema": "node lib/schema.js > schema.json",
+    "gen-types": "json2ts > config.d.ts < schema.json",
+    "build:config": "pnpm run gen-schema && pnpm run gen-types",
+    "prepublishOnly": "pnpm run build:config",
+    "lint": "standard",
+    "test": "borp"
+  },
+  "engines": {
+    "node": "^18.8.0 || >=20.6.0"
+  },
+  "devDependencies": {
+    "borp": "^0.10.0",
+    "fastify": "^4.26.2",
+    "pino": "^8.20.0",
+    "standard": "^17.0.0"
+  },
+  "dependencies": {
+    "@platformatic/config": "^1.33.0",
+    "@platformatic/service": "^1.33.0",
+    "amqplib": "^0.10.4",
+    "json-schema-to-typescript": "^13.0.0",
+    "undici": "^6.13.0"
+  }
+}
