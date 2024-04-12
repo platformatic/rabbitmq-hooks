@@ -6,6 +6,8 @@ const { createExchange, publishMessage } = require('./helper')
 const Fastify = require('fastify')
 const { deepEqual } = require('node:assert/strict')
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 test('happy path', async (t) => {
   const url = 'amqp://localhost'
   const exchange = 'test-exchange'
@@ -31,6 +33,7 @@ test('happy path', async (t) => {
   await buildServer(t, opts)
 
   await publishMessage(url, exchange, 'test message 1')
+  await sleep(200)
   await publishMessage(url, exchange, 'test message 2')
 
   deepEqual(messages, [{ data: 'test message 1' }, { data: 'test message 2' }])
