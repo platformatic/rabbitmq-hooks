@@ -3,64 +3,134 @@
 const test = require('node:test')
 const assert = require('node:assert')
 const RabbitMQ = require('../lib/rabbitmq')
-const { createExchange, publishMessage } = require('./helper')
+const { createExchange, publishMessage, sleep } = require('./helper')
 const logger = require('pino')()
 
 test('should fail connecting to rabbitmq', async () => {
-  const url = 'amqp://localhostxxxx'
-  const exchange = 'test-exchange'
-  const routingKey = 'test-routing-key'
-  const rabbitmq = new RabbitMQ({ url, exchange, routingKey, logger })
+  const url = 'xxxx'
+  const rabbitmq = new RabbitMQ({ logger })
   try {
-    await rabbitmq.connect(() => {})
+    await rabbitmq.connect(url)
     assert.fail('Should have thrown an error')
   } catch (err) {
-    assert.strictEqual(err.message, 'Connection failed to amqp://localhostxxxx')
+    assert.strictEqual(err.message, 'Connection failed to xxxx')
   }
   await rabbitmq.close()
 })
 
-test('should connect to rabbitmq succesfully', async () => {
+test('should fail to listen on a non-existent exchange', async () => {
   const url = 'amqp://localhost'
-  const exchange = 'test-exchange'
+  const exchange = 'test-exchange-xxx'
   const routingKey = ''
-
-  await createExchange(url, exchange, 'fanout')
 
   const messages = []
   const callback = (msg) => {
     messages.push(msg)
   }
 
-  const rabbitmq = new RabbitMQ({ url, exchange, routingKey, logger })
-  await rabbitmq.connect(callback)
+  let rabbitmq
+  try {
+    rabbitmq = new RabbitMQ({ logger })
+    await rabbitmq.connect(url)
+    await rabbitmq.listen(exchange, routingKey, callback)
+    assert.fail('Should have thrown an error')
+  } catch (err) {
+    assert.strictEqual(err.message, 'Exchange test-exchange-xxx does not exist')
+  }
+  await rabbitmq.close()
+  assert.strictEqual(messages.length, 0)
+})
+
+test('should connect to rabbitmq succesfully', async (t) => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange'
+  const routingKey = ''
+
+  const clean = await createExchange(url, exchange, 'fanout')
+  t.after(clean)
+
+  const messages = []
+  const callback = (msg) => {
+    messages.push(msg)
+  }
+
+  const rabbitmq = new RabbitMQ({ logger })
+  await rabbitmq.connect(url)
+  await rabbitmq.listen(exchange, routingKey, callback)
 
   await rabbitmq.close()
 
   assert.strictEqual(messages.length, 0)
 })
 
-test('should receive messages and call the callback for each message', async () => {
+test('should receive messages and call the callback for each message', async (t) => {
   const url = 'amqp://localhost'
-  const exchange = 'test-exchange'
+  const exchange = 'test-exchange-zzz'
   const routingKey = ''
 
-  await createExchange(url, exchange, 'fanout')
+  const clean = await createExchange(url, exchange, 'fanout')
+  t.after(clean)
 
   const messages = []
   const callback = (msg) => {
     messages.push(msg)
   }
 
-  const rabbitmq = new RabbitMQ({ url, exchange, routingKey, logger })
-  await rabbitmq.connect(callback)
+  const rabbitmq = new RabbitMQ({ logger })
+  await rabbitmq.connect()
+  await rabbitmq.listen(exchange, routingKey, callback)
 
-  await publishMessage(url, exchange, 'test message 1')
-  await publishMessage(url, exchange, 'test message 2')
+  await publishMessage(url, exchange, 'test message x1')
+  await publishMessage(url, exchange, 'test message x2')
 
   await rabbitmq.close()
 
   assert.strictEqual(messages.length, 2)
-  assert.strictEqual(messages[0].content.toString(), 'test message 1')
-  assert.strictEqual(messages[1].content.toString(), 'test message 2')
+  assert.strictEqual(messages[0].content.toString(), 'test message x1')
+  assert.strictEqual(messages[1].content.toString(), 'test message x2')
+})
+
+test('should fail to publish messages on non-existent exchanges', async () => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange-xxx'
+
+  const rabbitmq = new RabbitMQ({ logger })
+  await rabbitmq.connect(url)
+
+  try {
+    await rabbitmq.publish(exchange, 'test 1')
+    assert.fail('Should have thrown an error')
+  } catch (err) {
+    assert.strictEqual(err.message, 'Exchange test-exchange-xxx does not exist')
+  }
+  await rabbitmq.close()
+})
+
+test('should publish messages', async (t) => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange-aaa'
+  const routingKey = ''
+
+  const clean = await createExchange(url, exchange, 'fanout')
+  t.after(clean)
+
+  const messages = []
+  const callback = (msg) => {
+    messages.push(msg)
+  }
+
+  const rabbitmq = new RabbitMQ({ logger })
+  await rabbitmq.connect(url)
+  await rabbitmq.listen(exchange, routingKey, callback)
+
+  await rabbitmq.publish(exchange, 'test 1')
+  await rabbitmq.publish(exchange, 'test 2')
+
+  await sleep(200) // wait for the messages to be processed before closing the connection
+
+  assert.strictEqual(messages.length, 2)
+  assert.strictEqual(messages[0].content.toString(), 'test 1')
+  assert.strictEqual(messages[1].content.toString(), 'test 2')
+
+  await rabbitmq.close()
 })

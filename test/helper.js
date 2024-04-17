@@ -5,11 +5,13 @@ const amqp = require('amqplib')
 const rabbitHook = require('..')
 
 async function getConfig (opts) {
-  const { url, exchange, routingKey, targetUrl } = opts || {
+  const { url, exchanges } = opts || {
     url: 'amqp://localhost',
-    exchange: 'test-exchange',
-    routingKey: '',
-    targetUrl: 'http://localhost:3042'
+    exchanges: [{
+      name: 'test-exchange',
+      routingKey: '',
+      targetUrl: 'http://localhost:3042'
+    }]
   }
   const config = {}
   config.module = join(__dirname, '..')
@@ -19,9 +21,7 @@ async function getConfig (opts) {
   }
   config.rabbitmq = {
     url,
-    exchange,
-    routingKey,
-    targetUrl
+    exchanges
   }
   return { config }
 }
@@ -41,15 +41,26 @@ const createExchange = async (url, exchange, type = 'fanout') => {
     connection = await amqp.connect(url)
     channel = await connection.createChannel()
     await channel.assertExchange(exchange, type, { durable: false })
-  } catch (err) {
-    console.log(err)
-    throw new Error(`Connection failed to ${url}`)
+    channel.on('error', err => {
+      console.log('ERR2', err)
+    })
   } finally {
-    if (channel) {
-      await channel.close()
-    }
     if (connection) {
       await connection.close()
+    }
+  }
+  // return the cleanup
+  return async () => {
+    let connection
+    let channel
+    try {
+      connection = await amqp.connect(url)
+      channel = await connection.createChannel()
+      channel.deleteExchange(exchange)
+    } finally {
+      if (connection) {
+        await connection.close()
+      }
     }
   }
 }
@@ -75,8 +86,11 @@ const publishMessage = async (url, exchange, message) => {
   }
 }
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 module.exports = {
   createExchange,
   publishMessage,
-  buildServer
+  buildServer,
+  sleep
 }

@@ -12,11 +12,21 @@ test('should export stackable schema', async () => {
     type: 'object',
     properties: {
       url: { type: 'string' },
-      exchange: { type: 'string' },
-      routingKey: { type: 'string' },
-      targetUrl: { type: 'string' }
+      exchanges: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            routingKey: { type: 'string' },
+            targetUrl: { type: 'string' }
+          },
+          required: ['name', 'targetUrl'],
+          additionalProperties: false
+        }
+      }
     },
-    required: ['url', 'exchange', 'targetUrl'],
+    required: ['url', 'exchanges'],
     additionalProperties: false
   })
 })

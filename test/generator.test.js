@@ -16,9 +16,11 @@ test('should return a default Generator config', async () => {
   assert.strictEqual(defaultConfig.port, 3042)
   assert.deepEqual(defaultConfig.rabbitmq, {
     url: 'amqp://localhost',
-    exchange: 'my-exchange',
-    routingKey: '',
-    targetUrl: 'http://localhost:3042'
+    exchanges: [{
+      name: 'my-exchange',
+      routingKey: '',
+      targetUrl: 'http://localhost:3042'
+    }]
   })
   assert.deepStrictEqual(defaultConfig.env, {})
   assert.deepStrictEqual(defaultConfig.dependencies, {})
@@ -62,30 +64,30 @@ test('should return Generator config fields definitions', async () => {
   })
 
   const rabbitmqExchange = configFieldsDefs.find(
-    field => field.var === 'RABBITMQ_EXCHANGE'
+    field => field.var === 'RABBITMQ_EXCHANGE_NAME_0'
   )
   assert.deepStrictEqual(rabbitmqExchange, {
-    var: 'RABBITMQ_EXCHANGE',
-    label: 'RabbitMQ Exchange',
+    var: 'RABBITMQ_EXCHANGE_NAME_0',
+    label: 'RabbitMQ Exchange name',
     default: 'my-exchange',
     type: 'string'
   })
 
   const rabbitmqRoutingKey = configFieldsDefs.find(
-    field => field.var === 'RABBITMQ_ROUTING_KEY'
+    field => field.var === 'RABBITMQ_ROUTING_KEY_0'
   )
   assert.deepStrictEqual(rabbitmqRoutingKey, {
-    var: 'RABBITMQ_ROUTING_KEY',
+    var: 'RABBITMQ_ROUTING_KEY_0',
     label: 'RabbitMQ Routing Key',
     default: '',
     type: 'string'
   })
 
   const rabbitmqTargetUrl = configFieldsDefs.find(
-    field => field.var === 'RABBITMQ_TARGET_URL'
+    field => field.var === 'RABBITMQ_TARGET_URL_0'
   )
   assert.deepStrictEqual(rabbitmqTargetUrl, {
-    var: 'RABBITMQ_TARGET_URL',
+    var: 'RABBITMQ_TARGET_URL_0',
     label: 'RabbitMQ Target URL',
     default: 'http://localhost:3042',
     type: 'string'
@@ -127,9 +129,9 @@ test('should generate a stackable app', async (t) => {
     'PLT_SERVER_LOGGER_LEVEL=info',
     'PLT_TYPESCRIPT=false',
     'PORT=3042',
-    'RABBITMQ_EXCHANGE=my-exchange',
-    'RABBITMQ_ROUTING_KEY=',
-    'RABBITMQ_TARGET_URL=http://localhost:3042',
+    'RABBITMQ_EXCHANGE_NAME_0=my-exchange',
+    'RABBITMQ_ROUTING_KEY_0=',
+    'RABBITMQ_TARGET_URL_0=http://localhost:3042',
     'RABBITMQ_URL=amqp://localhost'
   ])
 
@@ -151,10 +153,12 @@ test('should generate a stackable app', async (t) => {
       openapi: true
     },
     rabbitmq: {
-      exchange: '{RABBITMQ_EXCHANGE}',
-      routingKey: '{RABBITMQ_ROUTING_KEY}',
       url: '{RABBITMQ_URL}',
-      targetUrl: '{RABBITMQ_TARGET_URL}'
+      exchanges: [{
+        name: '{RABBITMQ_EXCHANGE_NAME_0}',
+        routingKey: '{RABBITMQ_ROUTING_KEY_0}',
+        targetUrl: '{RABBITMQ_TARGET_URL_0}'
+      }]
     },
     watch: true
   })
