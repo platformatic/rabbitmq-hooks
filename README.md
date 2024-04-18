@@ -101,6 +101,36 @@ RECEIVED MESSAGE FROM RABBITMQ
 
 ```
 
-
 ## Configuration
+
+The plugin has a `rabbitmq` configuration object with the following, e.g.:
+
+```json
+  "rabbitmq": {
+    "url": "{PLT_RABBITMQ_CONNECTION_URL}",
+    "generateExchange": "{PLT_RABBITMQ_GENERATE_EXCHANGE}",
+    "exchanges": [
+      {
+        "name": "{PLT_RABBITMQ_EXCHANGE_NAME_0}",
+        "targetUrl": "{PLT_RABBITMQ_TARGET_URL_0}"
+      }
+    ]
+  }
+```
+With `.env`:
+
+```bash
+PLT_RABBITMQ_CONNECTION_URL=amqp://localhost
+PLT_RABBITMQ_GENERATE_EXCHANGE=true
+PLT_RABBITMQ_EXCHANGE_NAME_0=my-exchange
+PLT_RABBITMQ_TARGET_URL_0=http://localhost:3042/out
+```
+
+Where:
+- url: It's the RabbitMQ connection URL
+- generateExchange: If true, the exchange is created if not present. This is useful for testing/developing. The exchange is created as `fanout` non-durable.
+- exchanges: An array of exchanges to listen to:
+    - name: The exchange name
+    - targetUrl: The URL to post the message to. This can be a local URL, or a remote one.
+    - routingKey: [OPTIONAL} The routing key to listen to. If not specified, all messages are listened to.
 
