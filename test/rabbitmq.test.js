@@ -46,8 +46,7 @@ test('should connect to rabbitmq succesfully', async (t) => {
   const exchange = 'test-exchange'
   const routingKey = ''
 
-  const clean = await createExchange(url, exchange, 'fanout')
-  t.after(clean)
+  await createExchange(url, exchange, 'fanout')
 
   const messages = []
   const callback = (msg) => {
@@ -68,8 +67,7 @@ test('should receive messages and call the callback for each message', async (t)
   const exchange = 'test-exchange-zzz'
   const routingKey = ''
 
-  const clean = await createExchange(url, exchange, 'fanout')
-  t.after(clean)
+  await createExchange(url, exchange, 'fanout')
 
   const messages = []
   const callback = (msg) => {
@@ -111,8 +109,7 @@ test('should publish messages', async (t) => {
   const exchange = 'test-exchange-aaa'
   const routingKey = ''
 
-  const clean = await createExchange(url, exchange, 'fanout')
-  t.after(clean)
+  await createExchange(url, exchange, 'fanout')
 
   const messages = []
   const callback = (msg) => {

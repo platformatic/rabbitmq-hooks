@@ -42,7 +42,7 @@ const createExchange = async (url, exchange, type = 'fanout') => {
     channel = await connection.createChannel()
     await channel.assertExchange(exchange, type, { durable: false })
     channel.on('error', err => {
-      console.log('ERR2', err)
+      console.log(err)
     })
   } finally {
     if (connection) {

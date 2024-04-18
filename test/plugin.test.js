@@ -1,10 +1,10 @@
 'use strict'
 
 const { test } = require('node:test')
-const { buildServer } = require('./helper')
-const { createExchange, publishMessage, sleep } = require('./helper')
+const { createExchange, publishMessage, sleep, buildServer } = require('./helper')
 const Fastify = require('fastify')
-const { deepEqual } = require('node:assert/strict')
+const { deepEqual, strictEqual } = require('node:assert/strict')
+const { request } = require('undici')
 
 test('Propagates the published messages to the target server', async (t) => {
   const url = 'amqp://localhost'
@@ -27,8 +27,7 @@ test('Propagates the published messages to the target server', async (t) => {
     url,
     exchanges
   }
-  const deleteExchange = await createExchange(url, exchange, 'fanout', routingKey)
-  t.after(deleteExchange)
+  await createExchange(url, exchange, 'fanout', routingKey)
   await buildServer(t, opts)
 
   await publishMessage(url, exchange, 'test message 1')
@@ -72,10 +71,8 @@ test('Propagates the published messages on two exchanges to two different target
     url,
     exchanges
   }
-  const delete1 = await createExchange(url, exchange1, 'fanout', routingKey)
-  t.after(delete1)
-  const delete2 = await createExchange(url, exchange2, 'fanout', routingKey)
-  t.after(delete2)
+  await createExchange(url, exchange1, 'fanout', routingKey)
+  await createExchange(url, exchange2, 'fanout', routingKey)
   await buildServer(t, opts)
 
   await publishMessage(url, exchange1, 'test message 1')
@@ -93,10 +90,8 @@ test('Propagates the published messages on two exchanges to the same target URLs
   const exchange2 = 'test-exchange-2'
   const routingKey = ''
 
-  const delete1 = await createExchange(url, exchange1, 'fanout', routingKey)
-  t.after(delete1)
-  const delete2 = await createExchange(url, exchange2, 'fanout', routingKey)
-  t.after(delete2)
+  await createExchange(url, exchange1, 'fanout', routingKey)
+  await createExchange(url, exchange2, 'fanout', routingKey)
 
   // Prepares a target server to receive messages
   const messages = []
@@ -126,4 +121,96 @@ test('Propagates the published messages on two exchanges to the same target URLs
   await publishMessage(url, exchange2, 'test message 2')
 
   deepEqual(messages, [{ data: 'test message 1' }, { data: 'test message 2' }])
+})
+
+test('Publish using the POST /publish endpoint', async (t) => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange-publish'
+  const routingKey = ''
+
+  // Prepares a target server to receive messages
+  const messages = []
+  const target = Fastify()
+  target.post('/test', async (request, reply) => {
+    messages.push(request.body)
+    return { ok: true }
+  })
+  t.after(() => target.close())
+  await target.listen({ port: 0 })
+  const targetBaseUrl = `http://127.0.0.1:${target.server.address().port}`
+  const targetUrl = `${targetBaseUrl}/test`
+
+  const exchanges = [{ name: exchange, routingKey, targetUrl }]
+  const opts = {
+    url,
+    exchanges
+  }
+  await createExchange(url, exchange, 'fanout', routingKey)
+
+  const server = await buildServer(t, opts)
+  await server.listen(13042)
+
+  await request('http://localhost:13042/publish', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      exchange,
+      routingKey,
+      message: 'test message 1'
+    })
+  })
+
+  await sleep(200)
+
+  await request('http://localhost:13042/publish', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      exchange,
+      routingKey,
+      message: 'test message 2'
+    })
+  })
+  await sleep(200)
+
+  deepEqual(messages, [{ data: 'test message 1' }, { data: 'test message 2' }])
+  // deepEqual(messages, [{ data: 'test message 1' }])
+})
+
+test('Publish on a non-existent exchange should fail', async (t) => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange-publish-not-existent'
+  const routingKey = ''
+
+  const opts = {
+    url,
+    exchanges: []
+  }
+
+  const server = await buildServer(t, opts)
+  await server.listen(13042)
+
+  const res = await request('http://localhost:13042/publish', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      exchange,
+      routingKey,
+      message: 'test message 1'
+    })
+  })
+
+  strictEqual(res.statusCode, 500)
+  const body = await res.body.json()
+  deepEqual(body, {
+    statusCode: 500,
+    error: 'Internal Server Error',
+    message: 'Exchange test-exchange-publish-not-existent does not exist'
+  })
 })
