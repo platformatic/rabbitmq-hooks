@@ -54,40 +54,40 @@ test('should return Generator config fields definitions', async () => {
   })
 
   const rabbitmqUrl = configFieldsDefs.find(
-    field => field.var === 'RABBITMQ_URL'
+    field => field.var === 'PLT_RABBITMQ_CONNECTION_URL'
   )
   assert.deepStrictEqual(rabbitmqUrl, {
-    var: 'RABBITMQ_URL',
+    var: 'PLT_RABBITMQ_CONNECTION_URL',
     label: 'RabbitMQ URL',
     default: 'amqp://localhost',
     type: 'string'
   })
 
   const rabbitmqExchange = configFieldsDefs.find(
-    field => field.var === 'RABBITMQ_EXCHANGE_NAME_0'
+    field => field.var === 'PLT_RABBITMQ_EXCHANGE_NAME_0'
   )
   assert.deepStrictEqual(rabbitmqExchange, {
-    var: 'RABBITMQ_EXCHANGE_NAME_0',
+    var: 'PLT_RABBITMQ_EXCHANGE_NAME_0',
     label: 'RabbitMQ Exchange name',
     default: 'my-exchange',
     type: 'string'
   })
 
   const rabbitmqRoutingKey = configFieldsDefs.find(
-    field => field.var === 'RABBITMQ_ROUTING_KEY_0'
+    field => field.var === 'PLT_RABBITMQ_ROUTING_KEY_0'
   )
   assert.deepStrictEqual(rabbitmqRoutingKey, {
-    var: 'RABBITMQ_ROUTING_KEY_0',
+    var: 'PLT_RABBITMQ_ROUTING_KEY_0',
     label: 'RabbitMQ Routing Key',
     default: '',
     type: 'string'
   })
 
   const rabbitmqTargetUrl = configFieldsDefs.find(
-    field => field.var === 'RABBITMQ_TARGET_URL_0'
+    field => field.var === 'PLT_RABBITMQ_TARGET_URL_0'
   )
   assert.deepStrictEqual(rabbitmqTargetUrl, {
-    var: 'RABBITMQ_TARGET_URL_0',
+    var: 'PLT_RABBITMQ_TARGET_URL_0',
     label: 'RabbitMQ Target URL',
     default: 'http://localhost:3042',
     type: 'string'
@@ -125,14 +125,13 @@ test('should generate a stackable app', async (t) => {
   const envFile = await readFile(join(testDir, '.env'), 'utf8')
   const envVars = envFile.split('\n').filter(Boolean)
   assert.deepStrictEqual(envVars.sort(), [
+    'PLT_RABBITMQ_CONNECTION_URL=amqp://localhost',
+    'PLT_RABBITMQ_EXCHANGE_NAME_0=my-exchange',
+    'PLT_RABBITMQ_TARGET_URL_0=http://localhost:3042',
     'PLT_SERVER_HOSTNAME=0.0.0.0',
     'PLT_SERVER_LOGGER_LEVEL=info',
     'PLT_TYPESCRIPT=false',
-    'PORT=3042',
-    'RABBITMQ_EXCHANGE_NAME_0=my-exchange',
-    'RABBITMQ_ROUTING_KEY_0=',
-    'RABBITMQ_TARGET_URL_0=http://localhost:3042',
-    'RABBITMQ_URL=amqp://localhost'
+    'PORT=3042'
   ])
 
   const stackableConfig = require(join(testDir, 'platformatic.json'))
@@ -153,11 +152,10 @@ test('should generate a stackable app', async (t) => {
       openapi: true
     },
     rabbitmq: {
-      url: '{RABBITMQ_URL}',
+      url: '{PLT_RABBITMQ_CONNECTION_URL}',
       exchanges: [{
-        name: '{RABBITMQ_EXCHANGE_NAME_0}',
-        routingKey: '{RABBITMQ_ROUTING_KEY_0}',
-        targetUrl: '{RABBITMQ_TARGET_URL_0}'
+        name: '{PLT_RABBITMQ_EXCHANGE_NAME_0}',
+        targetUrl: '{PLT_RABBITMQ_TARGET_URL_0}'
       }]
     },
     watch: true

@@ -17,7 +17,7 @@ stackable.Generator = Generator
 
 stackable.configManagerConfig = {
   schema,
-  envWhitelist: ['PORT', 'HOSTNAME', 'RABBITMQ_URL', 'RABBITMQ_EXCHANGE', 'RABBITMQ_QUEUE', 'RABBITMQ_ROUTING_KEY'],
+  envWhitelist: ['PORT', 'HOSTNAME'],
   allowToWatch: ['.env'],
   schemaOptions: {
     useDefaults: true,

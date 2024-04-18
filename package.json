@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "main": "index.js",
   "bin": {
-    "create-rabbitmq-hooks": "./cli/create.js",
-    "start-rabbitmq-hooks": "./cli/start.js"
+    "create-platformatic-rabbitmq-hooks": "./cli/create.js",
+    "start-platformtic-rabbitmq-hooks": "./cli/start.js"
   },
   "scripts": {
     "gen-schema": "node lib/schema.js > schema.json",
