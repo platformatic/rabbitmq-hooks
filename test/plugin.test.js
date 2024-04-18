@@ -35,7 +35,7 @@ test('Propagates the published messages to the target server', async (t) => {
   await sleep(200)
   await publishMessage(url, exchange, 'test message 2')
 
-  deepEqual(messages, [{ data: 'test message 1' }, { data: 'test message 2' }])
+  deepEqual(messages, [{ message: 'test message 1' }, { message: 'test message 2' }])
 })
 
 test('Propagates the published messages on two exchanges to two different target URLs', async (t) => {
@@ -80,8 +80,8 @@ test('Propagates the published messages on two exchanges to two different target
   await sleep(200)
   await publishMessage(url, exchange2, 'test message 2')
 
-  deepEqual(messages1, [{ data: 'test message 1' }])
-  deepEqual(messages2, [{ data: 'test message 2' }])
+  deepEqual(messages1, [{ message: 'test message 1' }])
+  deepEqual(messages2, [{ message: 'test message 2' }])
 })
 
 test('Propagates the published messages on two exchanges to the same target URLs', async (t) => {
@@ -121,12 +121,12 @@ test('Propagates the published messages on two exchanges to the same target URLs
   await sleep(200)
   await publishMessage(url, exchange2, 'test message 2')
 
-  deepEqual(messages, [{ data: 'test message 1' }, { data: 'test message 2' }])
+  deepEqual(messages, [{ message: 'test message 1' }, { message: 'test message 2' }])
 })
 
 test('Publish using the POST /publish endpoint', async (t) => {
   const url = 'amqp://localhost'
-  const exchange = 'test-exchange-publish'
+  const exchange = 'test-exchange-publish22'
   const routingKey = ''
 
   // Prepares a target server to receive messages
@@ -151,41 +151,28 @@ test('Publish using the POST /publish endpoint', async (t) => {
   const server = await buildServer(t, opts)
   await server.listen(13042)
 
-  await request('http://localhost:13042/publish', {
+  await request(`http://localhost:13042/publish/${exchange}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      exchange,
-      routingKey,
-      message: 'test message 1'
-    })
+    body: Buffer.from('test message 1')
   })
 
   await sleep(200)
 
-  await request('http://localhost:13042/publish', {
+  // Uses a different content type
+  await request(`http://localhost:13042/publish/${exchange}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      exchange,
-      routingKey,
-      message: 'test message 2'
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ test: 'test message 2' })
   })
-  await sleep(200)
 
-  deepEqual(messages, [{ data: 'test message 1' }, { data: 'test message 2' }])
-  // deepEqual(messages, [{ data: 'test message 1' }])
+  await sleep(200)
+  deepEqual(messages, [{ message: 'test message 1' }, { message: '{"test":"test message 2"}' }])
+  // deepEqual(messages, [{ message: 'test message 1' }])
 })
 
 test('Publish on a non-existent exchange should fail', async (t) => {
   const url = 'amqp://localhost'
   const exchange = 'test-exchange-' + crypto.randomBytes(20).toString('hex')
-  const routingKey = ''
 
   const opts = {
     url,
@@ -196,16 +183,9 @@ test('Publish on a non-existent exchange should fail', async (t) => {
   const server = await buildServer(t, opts)
   await server.listen(13042)
 
-  const res = await request('http://localhost:13042/publish', {
+  const res = await request(`http://localhost:13042/publish/${exchange}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      exchange,
-      routingKey,
-      message: 'test message 1'
-    })
+    body: Buffer.from('test message 1')
   })
 
   strictEqual(res.statusCode, 500)
