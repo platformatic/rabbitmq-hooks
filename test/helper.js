@@ -5,8 +5,9 @@ const amqp = require('amqplib')
 const rabbitHook = require('..')
 
 async function getConfig (opts) {
-  const { url, exchanges } = opts || {
+  const { url, exchanges, generateExchange } = opts || {
     url: 'amqp://localhost',
+    generateExchange: 'true',
     exchanges: [{
       name: 'test-exchange',
       routingKey: '',
@@ -21,6 +22,7 @@ async function getConfig (opts) {
   }
   config.rabbitmq = {
     url,
+    generateExchange,
     exchanges
   }
   return { config }

@@ -5,6 +5,7 @@ const { createExchange, publishMessage, sleep, buildServer } = require('./helper
 const Fastify = require('fastify')
 const { deepEqual, strictEqual } = require('node:assert/strict')
 const { request } = require('undici')
+const crypto = require('node:crypto')
 
 test('Propagates the published messages to the target server', async (t) => {
   const url = 'amqp://localhost'
@@ -183,11 +184,12 @@ test('Publish using the POST /publish endpoint', async (t) => {
 
 test('Publish on a non-existent exchange should fail', async (t) => {
   const url = 'amqp://localhost'
-  const exchange = 'test-exchange-publish-not-existent'
+  const exchange = 'test-exchange-' + crypto.randomBytes(20).toString('hex')
   const routingKey = ''
 
   const opts = {
     url,
+    generateExchange: false,
     exchanges: []
   }
 
@@ -211,6 +213,6 @@ test('Publish on a non-existent exchange should fail', async (t) => {
   deepEqual(body, {
     statusCode: 500,
     error: 'Internal Server Error',
-    message: 'Exchange test-exchange-publish-not-existent does not exist'
+    message: `Exchange ${exchange} does not exist`
   })
 })
