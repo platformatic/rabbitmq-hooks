@@ -99,7 +99,7 @@ test('should receive messages and call the callback for each message, creating t
     messages.push(msg)
   }
 
-  const rabbitmq = new RabbitMQ({ logger, generateExchange: true})
+  const rabbitmq = new RabbitMQ({ logger, generateExchange: true })
   await rabbitmq.connect()
   await rabbitmq.listen(exchange, routingKey, callback)
 
@@ -112,7 +112,6 @@ test('should receive messages and call the callback for each message, creating t
   assert.strictEqual(messages[0].content.toString(), 'test message x1')
   assert.strictEqual(messages[1].content.toString(), 'test message x2')
 })
-
 
 test('should fail to publish messages on non-existent exchanges', async () => {
   const url = 'amqp://localhost'
