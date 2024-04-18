@@ -12,6 +12,7 @@ test('should export stackable schema', async () => {
     type: 'object',
     properties: {
       url: { type: 'string' },
+      generateExchange: { type: 'boolean', default: true },
       exchanges: {
         type: 'array',
         items: {

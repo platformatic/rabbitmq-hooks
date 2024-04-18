@@ -2,6 +2,7 @@
 
 const test = require('node:test')
 const assert = require('node:assert')
+const crypto = require('node:crypto')
 const RabbitMQ = require('../lib/rabbitmq')
 const { createExchange, publishMessage, sleep } = require('./helper')
 const logger = require('pino')()
@@ -87,6 +88,31 @@ test('should receive messages and call the callback for each message', async (t)
   assert.strictEqual(messages[0].content.toString(), 'test message x1')
   assert.strictEqual(messages[1].content.toString(), 'test message x2')
 })
+
+test('should receive messages and call the callback for each message, creating the exchange', async (t) => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange-' + crypto.randomBytes(20).toString('hex')
+  const routingKey = ''
+
+  const messages = []
+  const callback = (msg) => {
+    messages.push(msg)
+  }
+
+  const rabbitmq = new RabbitMQ({ logger, generateExchange: true})
+  await rabbitmq.connect()
+  await rabbitmq.listen(exchange, routingKey, callback)
+
+  await publishMessage(url, exchange, 'test message x1')
+  await publishMessage(url, exchange, 'test message x2')
+
+  await rabbitmq.close()
+
+  assert.strictEqual(messages.length, 2)
+  assert.strictEqual(messages[0].content.toString(), 'test message x1')
+  assert.strictEqual(messages[1].content.toString(), 'test message x2')
+})
+
 
 test('should fail to publish messages on non-existent exchanges', async () => {
   const url = 'amqp://localhost'
