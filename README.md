@@ -63,42 +63,51 @@ PLT_RABBITMQ_CONNECTION_URL=amqp://localhost
 PLT_RABBITMQ_GENERATE_EXCHANGE=true
 PLT_RABBITMQ_EXCHANGE_NAME_0=my-exchange
 PLT_RABBITMQ_TARGET_URL_0=http://localhost:3042/out
+PLT_RABBITMQ_TARGET_QUEUE_0=test-queue
 ```
 
 And restart the application. Now you can test the application with:
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"exchange": "my-exchange","message": "Hello World"}' http://localhost:3042/publish
+curl -X POST -H "Content-Type: application/json" -d '{"message": "Hello World"}' http://localhost:3042/publish/my-exchange
 ```
 
 The message is first posted on the exchange, and then the application will post it to the `out` endpoint:
 
 ```bash
-[14:12:58.995] INFO (main/92213): Publishing to exchange my-exchange with routing key undefined
-[14:12:58.997] INFO (main/92213): Hello World
-[14:12:59.004] INFO (main/92213): request completed
-    reqId: "f67629b9-1bd5-493c-8aee-7a48a5df71d2"
+[12:35:06.204] INFO (main/321646): incoming request
+    reqId: "52a6d8d9-8ef6-44d7-914d-a0b45a8087e5"
+    req: {
+      "method": "POST",
+      "url": "/publish/my-exchange",
+      "hostname": "localhost:3042",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 59672
+    }
+[12:35:06.209] INFO (main/321646): Publishing to exchange my-exchange with routing key undefined
+[12:35:06.218] INFO (main/321646): request completed
+    reqId: "52a6d8d9-8ef6-44d7-914d-a0b45a8087e5"
     res: {
       "statusCode": 200
     }
-    responseTime: 10.371099999174476
-[14:12:59.017] INFO (main/92213): incoming request
-    reqId: "6e1d5a63-1a38-4e98-9e3d-ea8e98e8fc03"
+    responseTime: 10.358657002449036
+[12:35:06.232] INFO (main/321646): incoming request
+    reqId: "0dd754ea-38ad-47d6-ba8b-5e70f3df4732"
     req: {
       "method": "POST",
       "url": "/out",
       "hostname": "localhost:3042",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 48896
+      "remotePort": 59680
     }
 RECEIVED MESSAGE FROM RABBITMQ
-[14:12:59.019] INFO (main/92213): request completed
-    reqId: "6e1d5a63-1a38-4e98-9e3d-ea8e98e8fc03"
+[12:35:06.235] INFO (main/321646): request completed
+    reqId: "0dd754ea-38ad-47d6-ba8b-5e70f3df4732"
     res: {
       "statusCode": 200
     }
-    responseTime: 0.9698329996317625
-
+    responseTime: 1.6560759991407394
+{"message":"Hello World"}
 ```
 
 ## Configuration
@@ -112,7 +121,8 @@ The plugin has a `rabbitmq` configuration object with the following, e.g.:
     "exchanges": [
       {
         "name": "{PLT_RABBITMQ_EXCHANGE_NAME_0}",
-        "targetUrl": "{PLT_RABBITMQ_TARGET_URL_0}"
+        "targetUrl": "{PLT_RABBITMQ_TARGET_URL_0}",
+        "queue": "{PLT_RABBITMQ_TARGET_QUEUE_0}"
       }
     ]
   }
@@ -124,6 +134,7 @@ PLT_RABBITMQ_CONNECTION_URL=amqp://localhost
 PLT_RABBITMQ_GENERATE_EXCHANGE=true
 PLT_RABBITMQ_EXCHANGE_NAME_0=my-exchange
 PLT_RABBITMQ_TARGET_URL_0=http://localhost:3042/out
+PLT_RABBITMQ_TARGET_QUEUE_0=test-queue
 ```
 
 Where:
@@ -133,4 +144,8 @@ Where:
     - name: The exchange name
     - targetUrl: The URL to post the message to. This can be a local URL, or a remote one.
     - routingKey: [OPTIONAL} The routing key to listen to. If not specified, all messages are listened to.
+    - queue: [OPTIONAL] The queue name to listen to. If not specified, a random queue is created.
+    - durableQueue: [OPTIONAL] If true, the queue is durable. Default is false.
+    - exclusiveQueue: [OPTIONAL] If true, the queue is exclusive. Default is false.
+
 
