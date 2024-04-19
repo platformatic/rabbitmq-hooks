@@ -11,6 +11,9 @@ test('Propagates the published messages to the target server', async (t) => {
   const url = 'amqp://localhost'
   const exchange = 'test-exchange'
   const routingKey = ''
+  const queue = 'test-queue'
+  const durableQueue = false
+  const exclusiveQueue = false
 
   // Prepares a target server to receive messages
   const messages = []
@@ -23,7 +26,7 @@ test('Propagates the published messages to the target server', async (t) => {
   await target.listen({ port: 0 })
   const targetUrl = `http://localhost:${target.server.address().port}`
 
-  const exchanges = [{ name: exchange, routingKey, targetUrl }]
+  const exchanges = [{ name: exchange, routingKey, targetUrl, queue, durableQueue, exclusiveQueue }]
   const opts = {
     url,
     exchanges
@@ -195,4 +198,88 @@ test('Publish on a non-existent exchange should fail', async (t) => {
     error: 'Internal Server Error',
     message: `Exchange ${exchange} does not exist`
   })
+})
+
+test('Propagates the published messages to the target server passing custom header and defaulting content-type to application/json', async (t) => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange'
+  const routingKey = ''
+
+  // Prepares a target server to receive messages
+  const messages = []
+  let headers = {}
+  const target = Fastify()
+  target.post('/', async (request, reply) => {
+    headers = request.headers
+    messages.push(request.body)
+    return { ok: true }
+  })
+  t.after(() => target.close())
+  await target.listen({ port: 0 })
+  const targetUrl = `http://localhost:${target.server.address().port}`
+
+  const exchanges = [{
+    name: exchange,
+    routingKey,
+    targetUrl,
+    headers: {
+      'My-Header': 'TEST'
+    }
+  }]
+  const opts = {
+    url,
+    exchanges
+  }
+  await createExchange(url, exchange, 'fanout', routingKey)
+  await buildServer(t, opts)
+
+  await publishMessage(url, exchange, 'test message 1')
+  await sleep(200)
+  await publishMessage(url, exchange, 'test message 2')
+
+  deepEqual(messages, [{ message: 'test message 1' }, { message: 'test message 2' }])
+
+  deepEqual(headers['my-header'], 'TEST')
+  deepEqual(headers['content-type'], 'application/json')
+})
+
+test('Propagates the published messages to the target server specifying content-type', async (t) => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange'
+  const routingKey = ''
+
+  // Prepares a target server to receive messages
+  const messages = []
+  let headers = {}
+  const target = Fastify()
+  target.post('/', async (request, reply) => {
+    headers = request.headers
+    messages.push(request.body)
+    return { ok: true }
+  })
+  t.after(() => target.close())
+  await target.listen({ port: 0 })
+  const targetUrl = `http://localhost:${target.server.address().port}`
+
+  const exchanges = [{
+    name: exchange,
+    routingKey,
+    targetUrl,
+    headers: {
+      'Content-Type': 'text/plain'
+    }
+  }]
+  const opts = {
+    url,
+    exchanges
+  }
+  await createExchange(url, exchange, 'fanout', routingKey)
+  await buildServer(t, opts)
+
+  await publishMessage(url, exchange, 'test message 1')
+  await sleep(200)
+  await publishMessage(url, exchange, 'test message 2')
+
+  deepEqual(headers['content-type'], 'text/plain')
+  deepEqual(messages, ['{"message":"test message 1"}', '{"message":"test message 2"}'])
 })
