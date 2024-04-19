@@ -20,7 +20,8 @@ test('should return a default Generator config', async () => {
     exchanges: [{
       name: 'my-exchange',
       routingKey: '',
-      targetUrl: 'http://localhost:3042'
+      targetUrl: 'http://localhost:3042',
+      queue: 'test-queue'
     }]
   })
   assert.deepStrictEqual(defaultConfig.env, {})
@@ -103,6 +104,16 @@ test('should return Generator config fields definitions', async () => {
     default: 'http://localhost:3042',
     type: 'string'
   })
+
+  const rabbitmqQueue = configFieldsDefs.find(
+    field => field.var === 'PLT_RABBITMQ_TARGET_QUEUE_0'
+  )
+  assert.deepStrictEqual(rabbitmqQueue, {
+    var: 'PLT_RABBITMQ_TARGET_QUEUE_0',
+    label: 'RabbitMQ Queue name',
+    default: '',
+    type: 'string'
+  })
 })
 
 test('should generate a stackable app', async (t) => {
@@ -139,6 +150,7 @@ test('should generate a stackable app', async (t) => {
     'PLT_RABBITMQ_CONNECTION_URL=amqp://localhost',
     'PLT_RABBITMQ_EXCHANGE_NAME_0=my-exchange',
     'PLT_RABBITMQ_GENERATE_EXCHANGE=true',
+    'PLT_RABBITMQ_TARGET_QUEUE_0=test-queue',
     'PLT_RABBITMQ_TARGET_URL_0=http://localhost:3042',
     'PLT_SERVER_HOSTNAME=0.0.0.0',
     'PLT_SERVER_LOGGER_LEVEL=info',
@@ -168,7 +180,8 @@ test('should generate a stackable app', async (t) => {
       generateExchange: '{PLT_RABBITMQ_GENERATE_EXCHANGE}',
       exchanges: [{
         name: '{PLT_RABBITMQ_EXCHANGE_NAME_0}',
-        targetUrl: '{PLT_RABBITMQ_TARGET_URL_0}'
+        targetUrl: '{PLT_RABBITMQ_TARGET_URL_0}',
+        queue: '{PLT_RABBITMQ_TARGET_QUEUE_0}'
       }]
     },
     watch: true

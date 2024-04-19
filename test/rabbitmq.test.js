@@ -33,7 +33,7 @@ test('should fail to listen on a non-existent exchange', async () => {
   try {
     rabbitmq = new RabbitMQ({ logger })
     await rabbitmq.connect(url)
-    await rabbitmq.listen(exchange, routingKey, callback)
+    await rabbitmq.listen({ exchange, routingKey }, callback)
     assert.fail('Should have thrown an error')
   } catch (err) {
     assert.strictEqual(err.message, 'Exchange test-exchange-xxx does not exist')
@@ -56,7 +56,7 @@ test('should connect to rabbitmq succesfully', async (t) => {
 
   const rabbitmq = new RabbitMQ({ logger })
   await rabbitmq.connect(url)
-  await rabbitmq.listen(exchange, routingKey, callback)
+  await rabbitmq.listen({ exchange, routingKey }, callback)
 
   await rabbitmq.close()
 
@@ -77,7 +77,7 @@ test('should receive messages and call the callback for each message', async (t)
 
   const rabbitmq = new RabbitMQ({ logger })
   await rabbitmq.connect()
-  await rabbitmq.listen(exchange, routingKey, callback)
+  await rabbitmq.listen({ exchange, routingKey }, callback)
 
   await publishMessage(url, exchange, 'test message x1')
   await publishMessage(url, exchange, 'test message x2')
@@ -101,7 +101,7 @@ test('should receive messages and call the callback for each message, creating t
 
   const rabbitmq = new RabbitMQ({ logger, generateExchange: true })
   await rabbitmq.connect()
-  await rabbitmq.listen(exchange, routingKey, callback)
+  await rabbitmq.listen({ exchange, routingKey }, callback)
 
   await publishMessage(url, exchange, 'test message x1')
   await publishMessage(url, exchange, 'test message x2')
@@ -143,7 +143,7 @@ test('should publish messages', async (t) => {
 
   const rabbitmq = new RabbitMQ({ logger })
   await rabbitmq.connect(url)
-  await rabbitmq.listen(exchange, routingKey, callback)
+  await rabbitmq.listen({ exchange, routingKey }, callback)
 
   await rabbitmq.publish(exchange, 'test 1')
   await rabbitmq.publish(exchange, 'test 2')
@@ -155,4 +155,92 @@ test('should publish messages', async (t) => {
   assert.strictEqual(messages[1].content.toString(), 'test 2')
 
   await rabbitmq.close()
+})
+
+test('should register two listener on the same queue, and only one should receive the message', async (t) => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange-' + crypto.randomBytes(20).toString('hex')
+  const routingKey = ''
+  const queue = 'test-queue'
+
+  const messages = []
+  const callback1 = (msg) => {
+    messages.push(msg)
+  }
+
+  const callback2 = (msg) => {
+    messages.push(msg)
+  }
+
+  const rabbitmq = new RabbitMQ({ logger, generateExchange: true })
+  await rabbitmq.connect()
+  await rabbitmq.listen({ exchange, routingKey, queue }, callback1)
+  await rabbitmq.listen({ exchange, routingKey, queue }, callback2)
+
+  await publishMessage(url, exchange, 'test message')
+  await sleep(200)
+
+  await rabbitmq.close()
+
+  assert.strictEqual(messages.length, 1)
+  assert.strictEqual(messages[0].content.toString(), 'test message')
+})
+
+test('should register two listener on the same exchange on two different queues, and both should receive the message', async (t) => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange-' + crypto.randomBytes(20).toString('hex')
+  const routingKey = ''
+  const queue1 = 'test-queue-1'
+  const queue2 = 'test-queue-2'
+
+  const messages = []
+  const callback1 = (msg) => {
+    messages.push(msg)
+  }
+
+  const callback2 = (msg) => {
+    messages.push(msg)
+  }
+
+  const rabbitmq = new RabbitMQ({ logger, generateExchange: true })
+  await rabbitmq.connect()
+  await rabbitmq.listen({ exchange, routingKey, queue: queue1 }, callback1)
+  await rabbitmq.listen({ exchange, routingKey, queue: queue2 }, callback2)
+
+  await publishMessage(url, exchange, 'test message')
+  await sleep(200)
+
+  await rabbitmq.close()
+
+  assert.strictEqual(messages.length, 2)
+  assert.strictEqual(messages[0].content.toString(), 'test message')
+  assert.strictEqual(messages[1].content.toString(), 'test message')
+})
+
+test('retry if the consumer throws', async (t) => {
+  const url = 'amqp://localhost'
+  const exchange = 'test-exchange-' + crypto.randomBytes(20).toString('hex')
+  const routingKey = ''
+  const queue = 'test-queue'
+
+  let retry = 0
+  const messages = []
+  const callback = (msg) => {
+    retry++
+    if (retry < 3) {
+      throw new Error('test error')
+    }
+    messages.push(msg)
+  }
+
+  const rabbitmq = new RabbitMQ({ logger, generateExchange: true })
+  await rabbitmq.connect()
+  await rabbitmq.listen({ exchange, routingKey, queue }, callback)
+
+  await publishMessage(url, exchange, 'test message')
+  await sleep(200)
+
+  await rabbitmq.close()
+  assert.strictEqual(messages.length, 1)
+  assert.strictEqual(messages[0].content.toString(), 'test message')
 })

@@ -20,7 +20,14 @@ test('should export stackable schema', async () => {
           properties: {
             name: { type: 'string' },
             routingKey: { type: 'string' },
-            targetUrl: { type: 'string' }
+            targetUrl: { type: 'string' },
+            headers: {
+              type: 'object',
+              additionalProperties: { type: 'string' }
+            },
+            queue: { type: 'string' },
+            durableQueue: { type: 'boolean', default: false },
+            exclusiveQueue: { type: 'boolean', default: false }
           },
           required: ['name', 'targetUrl'],
           additionalProperties: false
