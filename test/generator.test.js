@@ -163,7 +163,7 @@ test('should generate a stackable app', async (t) => {
   const stackableVersion = stackablePackageJson.version
 
   assert.deepEqual(stackableConfig, {
-    $schema: './stackable.schema.json',
+    $schema: `https://schemas.platformatic.dev/@platformatic/rabbitmq-hooks/${stackablePackageJson.version}.json`,
     module: `${stackableName}@${stackableVersion}`,
     server: {
       hostname: '{PLT_SERVER_HOSTNAME}',
