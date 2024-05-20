@@ -63,7 +63,7 @@ const createExchange = async (url, exchange, type = 'fanout', t) => {
     try {
       connection = await amqp.connect(url)
       channel = await connection.createChannel()
-      channel.deleteExchange(exchange)
+      await channel.deleteExchange(exchange)
     } finally {
       if (connection) {
         await connection.close()
