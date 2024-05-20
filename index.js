@@ -40,6 +40,8 @@ function _buildServer (opts) {
 // break fastify encapsulation
 stackable[Symbol.for('skip-override')] = true
 
+stackable[Symbol.for('plugin-meta')] = { name: 'rabbitmq-hooks' }
+
 module.exports = stackable
 module.exports.schema = schema
 module.exports.Generator = Generator
