@@ -31,12 +31,13 @@ test('Propagates the published messages to the target server', async (t) => {
     url,
     exchanges
   }
-  await createExchange(url, exchange, 'fanout', routingKey)
+  await createExchange(url, exchange, 'fanout', routingKey, t)
   await buildServer(t, opts)
 
   await publishMessage(url, exchange, 'test message 1')
   await sleep(200)
   await publishMessage(url, exchange, 'test message 2')
+  await sleep(200)
 
   deepEqual(messages, [{ message: 'test message 1' }, { message: 'test message 2' }])
 })
@@ -75,8 +76,8 @@ test('Propagates the published messages on two exchanges to two different target
     url,
     exchanges
   }
-  await createExchange(url, exchange1, 'fanout', routingKey)
-  await createExchange(url, exchange2, 'fanout', routingKey)
+  await createExchange(url, exchange1, 'fanout', routingKey, t)
+  await createExchange(url, exchange2, 'fanout', routingKey, t)
   await buildServer(t, opts)
 
   await publishMessage(url, exchange1, 'test message 1')
@@ -94,8 +95,8 @@ test('Propagates the published messages on two exchanges to the same target URLs
   const exchange2 = 'test-exchange-2'
   const routingKey = ''
 
-  await createExchange(url, exchange1, 'fanout', routingKey)
-  await createExchange(url, exchange2, 'fanout', routingKey)
+  await createExchange(url, exchange1, 'fanout', routingKey, t)
+  await createExchange(url, exchange2, 'fanout', routingKey, t)
 
   // Prepares a target server to receive messages
   const messages = []
@@ -149,7 +150,7 @@ test('Publish using the POST /publish endpoint', async (t) => {
     url,
     exchanges
   }
-  await createExchange(url, exchange, 'fanout', routingKey)
+  await createExchange(url, exchange, 'fanout', routingKey, t)
 
   const server = await buildServer(t, opts)
   await server.listen(13042)
@@ -230,7 +231,7 @@ test('Propagates the published messages to the target server passing custom head
     url,
     exchanges
   }
-  await createExchange(url, exchange, 'fanout', routingKey)
+  await createExchange(url, exchange, 'fanout', routingKey, t)
   await buildServer(t, opts)
 
   await publishMessage(url, exchange, 'test message 1')
@@ -273,7 +274,7 @@ test('Propagates the published messages to the target server specifying content-
     url,
     exchanges
   }
-  await createExchange(url, exchange, 'fanout', routingKey)
+  await createExchange(url, exchange, 'fanout', routingKey, t)
   await buildServer(t, opts)
 
   await publishMessage(url, exchange, 'test message 1')

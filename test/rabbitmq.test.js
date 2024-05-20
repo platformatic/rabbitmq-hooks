@@ -6,6 +6,7 @@ const crypto = require('node:crypto')
 const RabbitMQ = require('../lib/rabbitmq')
 const { createExchange, publishMessage, sleep } = require('./helper')
 const logger = require('pino')()
+logger.level = 'silent'
 
 test('should fail connecting to rabbitmq', async () => {
   const url = 'xxxx'
@@ -47,7 +48,7 @@ test('should connect to rabbitmq succesfully', async (t) => {
   const exchange = 'test-exchange'
   const routingKey = ''
 
-  await createExchange(url, exchange, 'fanout')
+  await createExchange(url, exchange, 'fanout', t)
 
   const messages = []
   const callback = (msg) => {
@@ -68,7 +69,7 @@ test('should receive messages and call the callback for each message', async (t)
   const exchange = 'test-exchange-zzz'
   const routingKey = ''
 
-  await createExchange(url, exchange, 'fanout')
+  await createExchange(url, exchange, 'fanout', t)
 
   const messages = []
   const callback = (msg) => {
@@ -134,7 +135,7 @@ test('should publish messages', async (t) => {
   const exchange = 'test-exchange-aaa'
   const routingKey = ''
 
-  await createExchange(url, exchange, 'fanout')
+  await createExchange(url, exchange, 'fanout', t)
 
   const messages = []
   const callback = (msg) => {

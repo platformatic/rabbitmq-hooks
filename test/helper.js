@@ -18,7 +18,7 @@ async function getConfig (opts) {
   config.module = join(__dirname, '..')
   config.server = {
     port: 0,
-    logger: { level: 'error' }
+    logger: { level: 'silent' }
   }
   config.rabbitmq = {
     url,
@@ -35,7 +35,7 @@ async function buildServer (t, opts) {
   return server
 }
 
-const createExchange = async (url, exchange, type = 'fanout') => {
+const createExchange = async (url, exchange, type = 'fanout', t) => {
   let connection = null
   let channel = null
 
@@ -51,8 +51,13 @@ const createExchange = async (url, exchange, type = 'fanout') => {
       await connection.close()
     }
   }
-  // return the cleanup
-  return async () => {
+
+  if (!t) {
+    return
+  }
+
+  t.after(async () => {
+    // cleanup
     let connection
     let channel
     try {
@@ -64,7 +69,7 @@ const createExchange = async (url, exchange, type = 'fanout') => {
         await connection.close()
       }
     }
-  }
+  })
 }
 
 const publishMessage = async (url, exchange, message) => {
@@ -74,7 +79,7 @@ const publishMessage = async (url, exchange, message) => {
   try {
     connection = await amqp.connect(url)
     channel = await connection.createChannel()
-    await channel.publish(exchange, '', Buffer.from(message))
+    await channel.publish(exchange, '', Buffer.from(message), { expiration: 1000 })
   } catch (err) {
     console.log(err)
     throw new Error(`Connection failed to ${url}`)
