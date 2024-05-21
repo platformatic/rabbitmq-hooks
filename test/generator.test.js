@@ -137,8 +137,7 @@ test('should generate a stackable app', async (t) => {
     '.gitignore',
     'global.d.ts',
     'package.json',
-    'platformatic.json',
-    'stackable.schema.json'
+    'platformatic.json'
   ])
 
   const packageJson = require(join(testDir, 'package.json'))
