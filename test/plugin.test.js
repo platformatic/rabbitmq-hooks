@@ -153,7 +153,7 @@ test('Publish using the POST /publish endpoint', async (t) => {
   await createExchange(url, exchange, 'fanout', routingKey, t)
 
   const server = await buildServer(t, opts)
-  await server.listen(13042)
+  await server.listen({ port: 13042 })
 
   await request(`http://localhost:13042/publish/${exchange}`, {
     method: 'POST',
@@ -185,7 +185,7 @@ test('Publish on a non-existent exchange should fail', async (t) => {
   }
 
   const server = await buildServer(t, opts)
-  await server.listen(13042)
+  await server.listen({ port: 13042 })
 
   const res = await request(`http://localhost:13042/publish/${exchange}`, {
     method: 'POST',
