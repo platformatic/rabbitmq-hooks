@@ -217,21 +217,26 @@ export interface RabbitmqHooksConfig {
         prefix?: string;
         path?: string;
       };
-      plugins?:
-        | {
-            [k: string]: unknown;
-          }
-        | {
-            [k: string]: unknown;
-          };
+      plugins?: {
+        [k: string]: unknown;
+      };
     }[];
   };
   module?: string;
   rabbitmq?: {
     url: string;
-    exchange: string;
-    routingKey?: string;
-    targetUrl: string;
+    generateExchange?: boolean;
+    exchanges: {
+      name: string;
+      routingKey?: string;
+      targetUrl: string;
+      headers?: {
+        [k: string]: string;
+      };
+      queue?: string;
+      durableQueue?: boolean;
+      exclusiveQueue?: boolean;
+    }[];
   };
 }
 export interface OpenTelemetry {
