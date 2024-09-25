@@ -12,23 +12,23 @@
     "build:config": "pnpm run gen-schema && pnpm run gen-types",
     "prepublishOnly": "pnpm run build:config",
     "lint": "standard",
-    "test": "borp"
+    "test": "borp --concurrency=1"
   },
   "engines": {
     "node": "^18.8.0 || >=20.6.0"
   },
   "devDependencies": {
     "borp": "^0.17.0",
-    "fastify": "^4.26.2",
+    "fastify": "^5.0.0",
     "pino": "^9.0.0",
     "standard": "^17.0.0"
   },
   "dependencies": {
-    "@platformatic/config": "^1.41.0",
-    "@platformatic/service": "^1.41.0",
+    "@platformatic/config": "^2.0.0",
+    "@platformatic/service": "^2.0.0",
     "amqplib": "^0.10.4",
-    "fastify-plugin": "^4.5.1",
-    "json-schema-to-typescript": "^14.0.0",
+    "fastify-plugin": "^5.0.0",
+    "json-schema-to-typescript": "^15.0.0",
     "undici": "^6.13.0"
   },
   "license": "Apache-2.0"

@@ -1,6 +1,6 @@
 'use strict'
 
-const { platformaticService } = require('@platformatic/service')
+const { platformaticService, buildStackable } = require('@platformatic/service')
 const { buildServer } = require('@platformatic/service')
 const { schema } = require('./lib/schema')
 const { Generator } = require('./lib/generator')
@@ -41,6 +41,10 @@ function _buildServer (opts) {
 stackable[Symbol.for('skip-override')] = true
 
 stackable[Symbol.for('plugin-meta')] = { name: 'rabbitmq-hooks' }
+
+stackable.buildStackable = function (opts) {
+  return buildStackable(opts, stackable)
+}
 
 module.exports = stackable
 module.exports.schema = schema
