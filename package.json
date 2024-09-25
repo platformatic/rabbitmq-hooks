@@ -12,7 +12,7 @@
     "build:config": "pnpm run gen-schema && pnpm run gen-types",
     "prepublishOnly": "pnpm run build:config",
     "lint": "standard",
-    "test": "borp"
+    "test": "borp --concurrency=1"
   },
   "engines": {
     "node": "^18.8.0 || >=20.6.0"

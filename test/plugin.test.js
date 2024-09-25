@@ -124,6 +124,7 @@ test('Propagates the published messages on two exchanges to the same target URLs
   await publishMessage(url, exchange1, 'test message 1')
   await sleep(200)
   await publishMessage(url, exchange2, 'test message 2')
+  await sleep(200)
 
   deepEqual(messages, [{ message: 'test message 1' }, { message: 'test message 2' }])
 })
@@ -280,6 +281,7 @@ test('Propagates the published messages to the target server specifying content-
   await publishMessage(url, exchange, 'test message 1')
   await sleep(200)
   await publishMessage(url, exchange, 'test message 2')
+  await sleep(200)
 
   deepEqual(headers['content-type'], 'text/plain')
   deepEqual(messages, ['{"message":"test message 1"}', '{"message":"test message 2"}'])
