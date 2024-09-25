@@ -96,6 +96,7 @@ const publishMessage = async (url, exchange, message) => {
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 module.exports = {
+  getConfig,
   createExchange,
   publishMessage,
   buildServer,
