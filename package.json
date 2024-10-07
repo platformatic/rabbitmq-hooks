@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@platformatic/config": "^2.0.0",
-    "@platformatic/service": "^2.0.0",
+    "@platformatic/service": "^3.0.0",
     "amqplib": "^0.10.4",
     "fastify-plugin": "^5.0.0",
     "json-schema-to-typescript": "^15.0.0",
