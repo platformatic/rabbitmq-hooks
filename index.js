@@ -1,52 +1,15 @@
-'use strict'
+import { create as createService, platformaticService } from '@platformatic/service'
+import { plugin } from './lib/plugin.js'
+import { schema } from './lib/schema.js'
 
-const { platformaticService, buildStackable } = require('@platformatic/service')
-const { buildServer } = require('@platformatic/service')
-const { schema } = require('./lib/schema')
-const { Generator } = require('./lib/generator')
-const plugin = require('./lib/plugin')
-
-async function stackable (fastify, opts) {
-  await fastify.register(platformaticService, opts)
-  await fastify.register(plugin)
+export async function rabbitmqHooks (app, capability) {
+  await platformaticService(app, capability)
+  await app.register(plugin, capability)
 }
 
-stackable.configType = 'rabbitmq-hooks'
-stackable.schema = schema
-stackable.Generator = Generator
-
-stackable.configManagerConfig = {
-  schema,
-  envWhitelist: ['PORT', 'HOSTNAME'],
-  allowToWatch: ['.env'],
-  schemaOptions: {
-    useDefaults: true,
-    coerceTypes: true,
-    allErrors: true,
-    strict: false
-  },
-  async transformConfig () {
-    this.current.plugins ||= {}
-    this.current.plugins.paths ||= []
-    // this.current.plugins.paths.push(join(__dirname, 'lib', 'plugin.js'))
-    return platformaticService.configManagerConfig.transformConfig.call(this)
-  }
+export async function create (configOrRoot, sourceOrConfig, context) {
+  return createService(configOrRoot, sourceOrConfig, { schema, applicationFactory: rabbitmqHooks, ...context })
 }
 
-function _buildServer (opts) {
-  return buildServer(opts, stackable)
-}
-
-// break fastify encapsulation
-stackable[Symbol.for('skip-override')] = true
-
-stackable[Symbol.for('plugin-meta')] = { name: 'rabbitmq-hooks' }
-
-stackable.buildStackable = function (opts) {
-  return buildStackable(opts, stackable)
-}
-
-module.exports = stackable
-module.exports.schema = schema
-module.exports.Generator = Generator
-module.exports.buildServer = _buildServer
+export { Generator } from './lib/generator.js'
+export { packageJson, schema, schemaComponents, version } from './lib/schema.js'

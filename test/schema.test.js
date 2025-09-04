@@ -1,14 +1,12 @@
-'use strict'
-
-const test = require('node:test')
-const assert = require('node:assert')
-const { schema } = require('../index')
+import { deepStrictEqual, strictEqual } from 'node:assert'
+import test from 'node:test'
+import { schema, version } from '../lib/schema.js'
 
 test('should export stackable schema', async () => {
-  assert.strictEqual(schema.$id, 'rabbitmq-hooks')
-  assert.strictEqual(typeof schema.version, 'string')
+  strictEqual(schema.$id, `https://schemas.platformatic.dev/@platformatic/rabbitmq-hooks/${version}.json`)
+  strictEqual(typeof schema.version, 'string')
 
-  assert.deepStrictEqual(schema.properties.rabbitmq, {
+  deepStrictEqual(schema.properties.rabbitmq, {
     type: 'object',
     properties: {
       url: { type: 'string' },

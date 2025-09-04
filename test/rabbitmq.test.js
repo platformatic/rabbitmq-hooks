@@ -1,21 +1,18 @@
-'use strict'
-
-const test = require('node:test')
-const assert = require('node:assert')
-const crypto = require('node:crypto')
-const RabbitMQ = require('../lib/rabbitmq')
-const { createExchange, publishMessage, sleep } = require('./helper')
-const logger = require('pino')()
-logger.level = 'silent'
+import { abstractLogger as logger } from '@platformatic/foundation'
+import { fail, strictEqual } from 'node:assert'
+import { randomBytes } from 'node:crypto'
+import { test } from 'node:test'
+import { RabbitMQ } from '../lib/rabbitmq.js'
+import { createExchange, publishMessage } from './helper.js'
 
 test('should fail connecting to rabbitmq', async () => {
   const url = 'xxxx'
   const rabbitmq = new RabbitMQ({ logger })
   try {
     await rabbitmq.connect(url)
-    assert.fail('Should have thrown an error')
+    fail('Should have thrown an error')
   } catch (err) {
-    assert.strictEqual(err.message, 'Connection failed to xxxx')
+    strictEqual(err.message, 'Connection failed to xxxx')
   }
   await rabbitmq.close()
 })
@@ -26,7 +23,7 @@ test('should fail to listen on a non-existent exchange', async () => {
   const routingKey = ''
 
   const messages = []
-  const callback = (msg) => {
+  const callback = msg => {
     messages.push(msg)
   }
 
@@ -35,15 +32,15 @@ test('should fail to listen on a non-existent exchange', async () => {
     rabbitmq = new RabbitMQ({ logger })
     await rabbitmq.connect(url)
     await rabbitmq.listen({ exchange, routingKey }, callback)
-    assert.fail('Should have thrown an error')
+    fail('Should have thrown an error')
   } catch (err) {
-    assert.strictEqual(err.message, 'Exchange test-exchange-xxx does not exist')
+    strictEqual(err.message, 'Exchange test-exchange-xxx does not exist')
   }
   await rabbitmq.close()
-  assert.strictEqual(messages.length, 0)
+  strictEqual(messages.length, 0)
 })
 
-test('should connect to rabbitmq succesfully', async (t) => {
+test('should connect to rabbitmq succesfully', async t => {
   const url = 'amqp://localhost'
   const exchange = 'test-exchange'
   const routingKey = ''
@@ -51,7 +48,7 @@ test('should connect to rabbitmq succesfully', async (t) => {
   await createExchange(url, exchange, 'fanout', t)
 
   const messages = []
-  const callback = (msg) => {
+  const callback = msg => {
     messages.push(msg)
   }
 
@@ -61,10 +58,10 @@ test('should connect to rabbitmq succesfully', async (t) => {
 
   await rabbitmq.close()
 
-  assert.strictEqual(messages.length, 0)
+  strictEqual(messages.length, 0)
 })
 
-test('should receive messages and call the callback for each message', async (t) => {
+test('should receive messages and call the callback for each message', async t => {
   const url = 'amqp://localhost'
   const exchange = 'test-exchange-zzz'
   const routingKey = ''
@@ -72,7 +69,7 @@ test('should receive messages and call the callback for each message', async (t)
   await createExchange(url, exchange, 'fanout', t)
 
   const messages = []
-  const callback = (msg) => {
+  const callback = msg => {
     messages.push(msg)
   }
 
@@ -85,18 +82,18 @@ test('should receive messages and call the callback for each message', async (t)
 
   await rabbitmq.close()
 
-  assert.strictEqual(messages.length, 2)
-  assert.strictEqual(messages[0].content.toString(), 'test message x1')
-  assert.strictEqual(messages[1].content.toString(), 'test message x2')
+  strictEqual(messages.length, 2)
+  strictEqual(messages[0].content.toString(), 'test message x1')
+  strictEqual(messages[1].content.toString(), 'test message x2')
 })
 
-test('should receive messages and call the callback for each message, creating the exchange', async (t) => {
+test('should receive messages and call the callback for each message, creating the exchange', async t => {
   const url = 'amqp://localhost'
-  const exchange = 'test-exchange-' + crypto.randomBytes(20).toString('hex')
+  const exchange = 'test-exchange-' + randomBytes(20).toString('hex')
   const routingKey = ''
 
   const messages = []
-  const callback = (msg) => {
+  const callback = msg => {
     messages.push(msg)
   }
 
@@ -109,9 +106,9 @@ test('should receive messages and call the callback for each message, creating t
 
   await rabbitmq.close()
 
-  assert.strictEqual(messages.length, 2)
-  assert.strictEqual(messages[0].content.toString(), 'test message x1')
-  assert.strictEqual(messages[1].content.toString(), 'test message x2')
+  strictEqual(messages.length, 2)
+  strictEqual(messages[0].content.toString(), 'test message x1')
+  strictEqual(messages[1].content.toString(), 'test message x2')
 })
 
 test('should fail to publish messages on non-existent exchanges', async () => {
@@ -123,14 +120,14 @@ test('should fail to publish messages on non-existent exchanges', async () => {
 
   try {
     await rabbitmq.publish(exchange, 'test 1')
-    assert.fail('Should have thrown an error')
+    fail('Should have thrown an error')
   } catch (err) {
-    assert.strictEqual(err.message, 'Exchange test-exchange-xxx does not exist')
+    strictEqual(err.message, 'Exchange test-exchange-xxx does not exist')
   }
   await rabbitmq.close()
 })
 
-test('should publish messages', async (t) => {
+test('should publish messages', async t => {
   const url = 'amqp://localhost'
   const exchange = 'test-exchange-aaa'
   const routingKey = ''
@@ -138,8 +135,13 @@ test('should publish messages', async (t) => {
   await createExchange(url, exchange, 'fanout', t)
 
   const messages = []
-  const callback = (msg) => {
+  const messagesReceived = Promise.withResolvers()
+  const callback = msg => {
     messages.push(msg)
+
+    if (messages.length === 2) {
+      messagesReceived.resolve()
+    }
   }
 
   const rabbitmq = new RabbitMQ({ logger })
@@ -149,58 +151,66 @@ test('should publish messages', async (t) => {
   await rabbitmq.publish(exchange, 'test 1')
   await rabbitmq.publish(exchange, 'test 2')
 
-  await sleep(200) // wait for the messages to be processed before closing the connection
+  await messagesReceived.promise
 
-  assert.strictEqual(messages.length, 2)
-  assert.strictEqual(messages[0].content.toString(), 'test 1')
-  assert.strictEqual(messages[1].content.toString(), 'test 2')
+  strictEqual(messages.length, 2)
+  strictEqual(messages[0].content.toString(), 'test 1')
+  strictEqual(messages[1].content.toString(), 'test 2')
 
   await rabbitmq.close()
 })
 
-test('should register two listener on the same queue, and only one should receive the message', async (t) => {
+test('should register two listener on the same queue, and only one should receive the message', async t => {
   const url = 'amqp://localhost'
-  const exchange = 'test-exchange-' + crypto.randomBytes(20).toString('hex')
+  const exchange = 'test-exchange-' + randomBytes(20).toString('hex')
   const routingKey = ''
   const queue = 'test-queue'
 
   const messages = []
-  const callback1 = (msg) => {
-    messages.push(msg)
-  }
+  const messagesReceived = Promise.withResolvers()
 
-  const callback2 = (msg) => {
+  const callback = msg => {
+    if (msg.fields.exchange !== exchange) {
+      // ignore messages from other tests that use the same queue
+      return
+    }
+
     messages.push(msg)
+    messagesReceived.resolve()
   }
 
   const rabbitmq = new RabbitMQ({ logger, generateExchange: true })
   await rabbitmq.connect()
-  await rabbitmq.listen({ exchange, routingKey, queue }, callback1)
-  await rabbitmq.listen({ exchange, routingKey, queue }, callback2)
+  await rabbitmq.listen({ exchange, routingKey, queue }, callback)
 
   await publishMessage(url, exchange, 'test message')
-  await sleep(200)
+  await messagesReceived.promise
 
   await rabbitmq.close()
 
-  assert.strictEqual(messages.length, 1)
-  assert.strictEqual(messages[0].content.toString(), 'test message')
+  strictEqual(messages.length, 1)
+  strictEqual(messages[0].content.toString(), 'test message')
 })
 
-test('should register two listener on the same exchange on two different queues, and both should receive the message', async (t) => {
+test('should register two listener on the same exchange on two different queues, and both should receive the message', async t => {
   const url = 'amqp://localhost'
-  const exchange = 'test-exchange-' + crypto.randomBytes(20).toString('hex')
+  const exchange = 'test-exchange-' + randomBytes(20).toString('hex')
   const routingKey = ''
   const queue1 = 'test-queue-1'
   const queue2 = 'test-queue-2'
 
   const messages = []
-  const callback1 = (msg) => {
+  const messages1Received = Promise.withResolvers()
+  const messages2Received = Promise.withResolvers()
+
+  const callback1 = msg => {
     messages.push(msg)
+    messages1Received.resolve()
   }
 
-  const callback2 = (msg) => {
+  const callback2 = msg => {
     messages.push(msg)
+    messages2Received.resolve()
   }
 
   const rabbitmq = new RabbitMQ({ logger, generateExchange: true })
@@ -209,29 +219,33 @@ test('should register two listener on the same exchange on two different queues,
   await rabbitmq.listen({ exchange, routingKey, queue: queue2 }, callback2)
 
   await publishMessage(url, exchange, 'test message')
-  await sleep(200)
+  await Promise.all([messages1Received.promise, messages2Received.promise])
 
   await rabbitmq.close()
 
-  assert.strictEqual(messages.length, 2)
-  assert.strictEqual(messages[0].content.toString(), 'test message')
-  assert.strictEqual(messages[1].content.toString(), 'test message')
+  strictEqual(messages.length, 2)
+  strictEqual(messages[0].content.toString(), 'test message')
+  strictEqual(messages[1].content.toString(), 'test message')
 })
 
-test('retry if the consumer throws', async (t) => {
+test('retry if the consumer throws', async t => {
   const url = 'amqp://localhost'
-  const exchange = 'test-exchange-' + crypto.randomBytes(20).toString('hex')
+  const exchange = 'test-exchange-' + randomBytes(20).toString('hex')
   const routingKey = ''
   const queue = 'test-queue'
 
   let retry = 0
   const messages = []
-  const callback = (msg) => {
+  const messagesReceived = Promise.withResolvers()
+
+  const callback = msg => {
     retry++
     if (retry < 3) {
       throw new Error('test error')
     }
     messages.push(msg)
+
+    messagesReceived.resolve()
   }
 
   const rabbitmq = new RabbitMQ({ logger, generateExchange: true })
@@ -239,9 +253,9 @@ test('retry if the consumer throws', async (t) => {
   await rabbitmq.listen({ exchange, routingKey, queue }, callback)
 
   await publishMessage(url, exchange, 'test message')
-  await sleep(200)
+  await messagesReceived.promise
 
   await rabbitmq.close()
-  assert.strictEqual(messages.length, 1)
-  assert.strictEqual(messages[0].content.toString(), 'test message')
+  strictEqual(messages.length, 1)
+  strictEqual(messages[0].content.toString(), 'test message')
 })
