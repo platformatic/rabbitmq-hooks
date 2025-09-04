@@ -39,9 +39,6 @@ importers:
       neostandard:
         specifier: ^0.12.1
         version: 0.12.2(@typescript-eslint/utils@8.42.0(eslint@9.34.0)(typescript@5.9.2))(eslint@9.34.0)(typescript@5.9.2)
-      pino:
-        specifier: ^9.0.0
-        version: 9.9.1
 
 packages:
 
