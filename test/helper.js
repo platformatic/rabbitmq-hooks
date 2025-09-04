@@ -1,46 +1,45 @@
-'use strict'
+import { connect } from 'amqplib'
+import { create } from '../index.js'
 
-const { join } = require('node:path')
-const amqp = require('amqplib')
-const rabbitHook = require('..')
+export async function getConfig (opts) {}
 
-async function getConfig (opts) {
+export async function createApplication (t, opts) {
   const { url, exchanges, generateExchange } = opts || {
     url: 'amqp://localhost',
     generateExchange: 'true',
-    exchanges: [{
-      name: 'test-exchange',
-      routingKey: '',
-      targetUrl: 'http://localhost:3042'
-    }]
+    exchanges: [
+      {
+        name: 'test-exchange',
+        routingKey: '',
+        targetUrl: 'http://localhost:3042'
+      }
+    ]
   }
-  const config = {}
-  config.module = join(__dirname, '..')
-  config.server = {
-    port: 0,
-    logger: { level: 'silent' }
-  }
-  config.rabbitmq = {
-    url,
-    generateExchange,
-    exchanges
-  }
-  return { config }
-}
 
-async function buildServer (t, opts) {
-  const { config } = await getConfig(opts)
-  const server = await rabbitHook.buildServer(config)
+  const server = await create(import.meta.dirname, {
+    server: {
+      port: 0,
+      logger: { level: 'silent' }
+    },
+    rabbitmq: {
+      url,
+      generateExchange,
+      exchanges
+    }
+  })
+
   t.after(() => server.close())
+
+  await server.init()
   return server
 }
 
-const createExchange = async (url, exchange, type = 'fanout', t) => {
+export async function createExchange (url, exchange, type = 'fanout', t) {
   let connection = null
   let channel = null
 
   try {
-    connection = await amqp.connect(url)
+    connection = await connect(url)
     channel = await connection.createChannel()
     await channel.assertExchange(exchange, type, { durable: false })
     channel.on('error', err => {
@@ -61,7 +60,7 @@ const createExchange = async (url, exchange, type = 'fanout', t) => {
     let connection
     let channel
     try {
-      connection = await amqp.connect(url)
+      connection = await connect(url)
       channel = await connection.createChannel()
       await channel.deleteExchange(exchange)
     } finally {
@@ -72,12 +71,12 @@ const createExchange = async (url, exchange, type = 'fanout', t) => {
   })
 }
 
-const publishMessage = async (url, exchange, message) => {
+export async function publishMessage (url, exchange, message) {
   let connection = null
   let channel = null
 
   try {
-    connection = await amqp.connect(url)
+    connection = await connect(url)
     channel = await connection.createChannel()
     await channel.publish(exchange, '', Buffer.from(message), { expiration: 1000 })
   } catch (err) {
@@ -91,14 +90,4 @@ const publishMessage = async (url, exchange, message) => {
       await connection.close()
     }
   }
-}
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-module.exports = {
-  getConfig,
-  createExchange,
-  publishMessage,
-  buildServer,
-  sleep
 }

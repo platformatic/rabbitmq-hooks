@@ -8,30 +8,27 @@ Then you can:
 - Publish messages to an exchange from a HTTP endpoint with a `POST` on `/publish` endpoint
 
 
-## Standalone Install & Test
+## Getting Started
 
-You can generate a standalone application with: 
+Create a new Platformatic application with the RabbitMQ Hooks package using [Wattpm](https://platformatic.io/docs/wattpm):
 
 ```bash
-npx --package @platformatic/rabbitmq-hooks -c create-platformatic-rabbitmq-hooks
-cd rabbitmq-hooks-app
+npx wattpm@latest create
 ```
+
+And select `@platformatic/rabbitmq-hooks` from the list of available packages.
 
 This application assumes that you have a RabbitMQ server running at `amqp://localhost`. A `my-exchange` exchange is created if not present.
 Now start a RabbitMQ server if not already running, for instance with docker:
 
 ```bash
 docker run -d --hostname my-rabbit --name plt-rabbit rabbitmq:3
-
 ```
 
-Then you can run the application with `npm start`:
+Then you can run the application with `wattpm start`:
 
 ```bash
-➜ npm start
-
-> start
-> platformatic start
+➜ wattpm start
 
 [14:10:25.128] INFO (main/91344): Starting rabbitmq-hooks plugin
 [14:10:25.197] INFO (main/91344): Connected to RabbitMQ
@@ -45,11 +42,11 @@ exchange my-exchange true
 To test this, you can add a `out` endpoint to the app, e.g. in `routes/root` add:
 
 ```javascript
-  fastify.post('/out', async (request, reply) => {
-    const message = await request.body.message
-    console.log('RECEIVED MESSAGE FROM RABBITMQ')
-    console.log(message)
-  })
+fastify.post('/out', async (request, reply) => {
+  const message = await request.body.message
+  console.log('RECEIVED MESSAGE FROM RABBITMQ')
+  console.log(message)
+})
 ```
 
 Then change `.env` to use it:

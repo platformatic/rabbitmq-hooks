@@ -5,7 +5,8 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface RabbitmqHooksConfig {
+export interface PlatformaticRabbitmqHooksConfiguration {
+  basePath?: string;
   server?: {
     hostname?: string;
     port?: number | string;
@@ -52,8 +53,6 @@ export interface RabbitmqHooksConfig {
                     [k: string]: unknown;
                   };
                   level?: string;
-                  additionalProperties?: never;
-                  [k: string]: unknown;
                 }[];
                 options?: {
                   [k: string]: unknown;
@@ -64,6 +63,21 @@ export interface RabbitmqHooksConfig {
             options?: {
               [k: string]: unknown;
             };
+          };
+          formatters?: {
+            path: string;
+          };
+          timestamp?: "epochTime" | "unixTime" | "nullTime" | "isoTime";
+          redact?: {
+            paths: string[];
+            censor?: string;
+          };
+          base?: {
+            [k: string]: unknown;
+          } | null;
+          messageKey?: string;
+          customLevels?: {
+            [k: string]: unknown;
           };
           [k: string]: unknown;
         };
@@ -150,25 +164,82 @@ export interface RabbitmqHooksConfig {
   plugins?: {
     [k: string]: unknown;
   };
-  metrics?:
-    | boolean
-    | {
-        port?: number | string;
-        hostname?: string;
-        endpoint?: string;
-        server?: "own" | "parent" | "hide";
-        defaultMetrics?: {
-          enabled: boolean;
+  telemetry?: {
+    enabled?: boolean | string;
+    /**
+     * The name of the application. Defaults to the folder name if not specified.
+     */
+    applicationName: string;
+    /**
+     * The version of the application (optional)
+     */
+    version?: string;
+    /**
+     * An array of paths to skip when creating spans. Useful for health checks and other endpoints that do not need to be traced.
+     */
+    skip?: {
+      /**
+       * The path to skip. Can be a string or a regex.
+       */
+      path?: string;
+      /**
+       * HTTP method to skip
+       */
+      method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
+      [k: string]: unknown;
+    }[];
+    exporter?:
+      | {
+          type?: "console" | "otlp" | "zipkin" | "memory" | "file";
+          /**
+           * Options for the exporter. These are passed directly to the exporter.
+           */
+          options?: {
+            /**
+             * The URL to send the traces to. Not used for console or memory exporters.
+             */
+            url?: string;
+            /**
+             * Headers to send to the exporter. Not used for console or memory exporters.
+             */
+            headers?: {
+              [k: string]: unknown;
+            };
+            /**
+             * The path to write the traces to. Only for file exporter.
+             */
+            path?: string;
+            [k: string]: unknown;
+          };
+          additionalProperties?: never;
+          [k: string]: unknown;
+        }[]
+      | {
+          type?: "console" | "otlp" | "zipkin" | "memory" | "file";
+          /**
+           * Options for the exporter. These are passed directly to the exporter.
+           */
+          options?: {
+            /**
+             * The URL to send the traces to. Not used for console or memory exporters.
+             */
+            url?: string;
+            /**
+             * Headers to send to the exporter. Not used for console or memory exporters.
+             */
+            headers?: {
+              [k: string]: unknown;
+            };
+            /**
+             * The path to write the traces to. Only for file exporter.
+             */
+            path?: string;
+            [k: string]: unknown;
+          };
+          additionalProperties?: never;
+          [k: string]: unknown;
         };
-        auth?: {
-          username: string;
-          password: string;
-        };
-        labels?: {
-          [k: string]: string;
-        };
-      };
-  telemetry?: OpenTelemetry;
+  };
   watch?:
     | {
         enabled?: boolean | string;
@@ -182,6 +253,7 @@ export interface RabbitmqHooksConfig {
     | string;
   $schema?: string;
   module?: string;
+  application?: {};
   service?: {
     openapi?:
       | {
@@ -211,18 +283,347 @@ export interface RabbitmqHooksConfig {
           graphiql?: boolean;
         }
       | boolean;
+    proxy?:
+      | false
+      | {
+          upstream?: string;
+          prefix?: string;
+          hostname?: string;
+          ws?: {
+            upstream?: string;
+            reconnect?: {
+              pingInterval?: number;
+              maxReconnectionRetries?: number;
+              reconnectInterval?: number;
+              reconnectDecay?: number;
+              connectionTimeout?: number;
+              reconnectOnClose?: boolean;
+              logs?: boolean;
+              [k: string]: unknown;
+            };
+            hooks?: {
+              path: string;
+            };
+          };
+        };
   };
-  clients?: {
-    serviceId?: string;
-    name?: string;
-    type?: "openapi" | "graphql";
-    path?: string;
-    schema?: string;
-    url?: string;
-    fullResponse?: boolean;
-    fullRequest?: boolean;
-    validateResponse?: boolean;
-  }[];
+  runtime?: {
+    preload?: string | string[];
+    basePath?: string;
+    services?: {
+      [k: string]: unknown;
+    }[];
+    workers?: number | string;
+    logger?: {
+      level: (
+        | ("fatal" | "error" | "warn" | "info" | "debug" | "trace" | "silent")
+        | {
+            [k: string]: unknown;
+          }
+      ) &
+        string;
+      transport?:
+        | {
+            target?: string;
+            options?: {
+              [k: string]: unknown;
+            };
+          }
+        | {
+            targets?: {
+              target?: string;
+              options?: {
+                [k: string]: unknown;
+              };
+              level?: string;
+            }[];
+            options?: {
+              [k: string]: unknown;
+            };
+          };
+      pipeline?: {
+        target?: string;
+        options?: {
+          [k: string]: unknown;
+        };
+      };
+      formatters?: {
+        path: string;
+      };
+      timestamp?: "epochTime" | "unixTime" | "nullTime" | "isoTime";
+      redact?: {
+        paths: string[];
+        censor?: string;
+      };
+      base?: {
+        [k: string]: unknown;
+      } | null;
+      messageKey?: string;
+      customLevels?: {
+        [k: string]: unknown;
+      };
+      [k: string]: unknown;
+    };
+    server?: {
+      hostname?: string;
+      port?: number | string;
+      http2?: boolean;
+      https?: {
+        allowHTTP1?: boolean;
+        key:
+          | string
+          | {
+              path?: string;
+            }
+          | (
+              | string
+              | {
+                  path?: string;
+                }
+            )[];
+        cert:
+          | string
+          | {
+              path?: string;
+            }
+          | (
+              | string
+              | {
+                  path?: string;
+                }
+            )[];
+        requestCert?: boolean;
+        rejectUnauthorized?: boolean;
+      };
+    };
+    startTimeout?: number;
+    restartOnError?: boolean | number;
+    exitOnUnhandledErrors?: boolean;
+    gracefulShutdown?: {
+      runtime: number | string;
+      application: number | string;
+    };
+    health?: {
+      enabled?: boolean | string;
+      interval?: number | string;
+      gracePeriod?: number | string;
+      maxUnhealthyChecks?: number | string;
+      maxELU?: number | string;
+      maxHeapUsed?: number | string;
+      maxHeapTotal?: number | string;
+      maxYoungGeneration?: number | string;
+    };
+    undici?: {
+      agentOptions?: {
+        [k: string]: unknown;
+      };
+      interceptors?:
+        | {
+            module: string;
+            options: {
+              [k: string]: unknown;
+            };
+            [k: string]: unknown;
+          }[]
+        | {
+            Client?: {
+              module: string;
+              options: {
+                [k: string]: unknown;
+              };
+              [k: string]: unknown;
+            }[];
+            Pool?: {
+              module: string;
+              options: {
+                [k: string]: unknown;
+              };
+              [k: string]: unknown;
+            }[];
+            Agent?: {
+              module: string;
+              options: {
+                [k: string]: unknown;
+              };
+              [k: string]: unknown;
+            }[];
+            [k: string]: unknown;
+          };
+      [k: string]: unknown;
+    };
+    httpCache?:
+      | boolean
+      | {
+          store?: string;
+          /**
+           * @minItems 1
+           */
+          methods?: [string, ...string[]];
+          cacheTagsHeader?: string;
+          maxSize?: number;
+          maxEntrySize?: number;
+          maxCount?: number;
+          [k: string]: unknown;
+        };
+    watch?: boolean | string;
+    managementApi?:
+      | boolean
+      | string
+      | {
+          logs?: {
+            maxSize?: number;
+          };
+        };
+    metrics?:
+      | boolean
+      | {
+          port?: number | string;
+          enabled?: boolean | string;
+          hostname?: string;
+          endpoint?: string;
+          auth?: {
+            username: string;
+            password: string;
+          };
+          labels?: {
+            [k: string]: string;
+          };
+          readiness?:
+            | boolean
+            | {
+                endpoint?: string;
+                success?: {
+                  statusCode?: number;
+                  body?: string;
+                };
+                fail?: {
+                  statusCode?: number;
+                  body?: string;
+                };
+              };
+          liveness?:
+            | boolean
+            | {
+                endpoint?: string;
+                success?: {
+                  statusCode?: number;
+                  body?: string;
+                };
+                fail?: {
+                  statusCode?: number;
+                  body?: string;
+                };
+              };
+          additionalProperties?: never;
+          [k: string]: unknown;
+        };
+    telemetry?: {
+      enabled?: boolean | string;
+      /**
+       * The name of the application. Defaults to the folder name if not specified.
+       */
+      applicationName: string;
+      /**
+       * The version of the application (optional)
+       */
+      version?: string;
+      /**
+       * An array of paths to skip when creating spans. Useful for health checks and other endpoints that do not need to be traced.
+       */
+      skip?: {
+        /**
+         * The path to skip. Can be a string or a regex.
+         */
+        path?: string;
+        /**
+         * HTTP method to skip
+         */
+        method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
+        [k: string]: unknown;
+      }[];
+      exporter?:
+        | {
+            type?: "console" | "otlp" | "zipkin" | "memory" | "file";
+            /**
+             * Options for the exporter. These are passed directly to the exporter.
+             */
+            options?: {
+              /**
+               * The URL to send the traces to. Not used for console or memory exporters.
+               */
+              url?: string;
+              /**
+               * Headers to send to the exporter. Not used for console or memory exporters.
+               */
+              headers?: {
+                [k: string]: unknown;
+              };
+              /**
+               * The path to write the traces to. Only for file exporter.
+               */
+              path?: string;
+              [k: string]: unknown;
+            };
+            additionalProperties?: never;
+            [k: string]: unknown;
+          }[]
+        | {
+            type?: "console" | "otlp" | "zipkin" | "memory" | "file";
+            /**
+             * Options for the exporter. These are passed directly to the exporter.
+             */
+            options?: {
+              /**
+               * The URL to send the traces to. Not used for console or memory exporters.
+               */
+              url?: string;
+              /**
+               * Headers to send to the exporter. Not used for console or memory exporters.
+               */
+              headers?: {
+                [k: string]: unknown;
+              };
+              /**
+               * The path to write the traces to. Only for file exporter.
+               */
+              path?: string;
+              [k: string]: unknown;
+            };
+            additionalProperties?: never;
+            [k: string]: unknown;
+          };
+    };
+    inspectorOptions?: {
+      host?: string;
+      port?: number;
+      breakFirstLine?: boolean;
+      watchDisabled?: boolean;
+      [k: string]: unknown;
+    };
+    applicationTimeout?: number | string;
+    messagingTimeout?: number | string;
+    env?: {
+      [k: string]: string;
+    };
+    sourceMaps?: boolean;
+    scheduler?: {
+      enabled?: boolean | string;
+      name: string;
+      cron: string;
+      callbackUrl: string;
+      method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+      headers?: {
+        [k: string]: string;
+      };
+      body?:
+        | string
+        | {
+            [k: string]: unknown;
+          };
+      maxRetries?: number;
+      [k: string]: unknown;
+    }[];
+  };
   rabbitmq?: {
     url: string;
     generateExchange?: boolean;
@@ -238,73 +639,6 @@ export interface RabbitmqHooksConfig {
       exclusiveQueue?: boolean;
     }[];
   };
-}
-export interface OpenTelemetry {
-  /**
-   * The name of the service. Defaults to the folder name if not specified.
-   */
-  serviceName: string;
-  /**
-   * The version of the service (optional)
-   */
-  version?: string;
-  /**
-   * An array of paths to skip when creating spans. Useful for health checks and other endpoints that do not need to be traced.
-   */
-  skip?: {
-    /**
-     * The path to skip. Can be a string or a regex.
-     */
-    path?: string;
-    /**
-     * HTTP method to skip
-     */
-    method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
-    [k: string]: unknown;
-  }[];
-  exporter?:
-    | {
-        type?: "console" | "otlp" | "zipkin" | "memory";
-        /**
-         * Options for the exporter. These are passed directly to the exporter.
-         */
-        options?: {
-          /**
-           * The URL to send the traces to. Not used for console or memory exporters.
-           */
-          url?: string;
-          /**
-           * Headers to send to the exporter. Not used for console or memory exporters.
-           */
-          headers?: {
-            [k: string]: unknown;
-          };
-          [k: string]: unknown;
-        };
-        additionalProperties?: never;
-        [k: string]: unknown;
-      }[]
-    | {
-        type?: "console" | "otlp" | "zipkin" | "memory";
-        /**
-         * Options for the exporter. These are passed directly to the exporter.
-         */
-        options?: {
-          /**
-           * The URL to send the traces to. Not used for console or memory exporters.
-           */
-          url?: string;
-          /**
-           * Headers to send to the exporter. Not used for console or memory exporters.
-           */
-          headers?: {
-            [k: string]: unknown;
-          };
-          [k: string]: unknown;
-        };
-        additionalProperties?: never;
-        [k: string]: unknown;
-      };
 }
 export interface Info {
   title: string;
@@ -378,13 +712,13 @@ export interface PathItem {
   servers?: Server[];
   parameters?: ParameterOrReference[];
   get?: Operation;
-  put?: Operation;
-  post?: Operation;
-  delete?: Operation;
-  options?: Operation;
-  head?: Operation;
-  patch?: Operation;
-  trace?: Operation;
+  put?: Operation1;
+  post?: Operation1;
+  delete?: Operation1;
+  options?: Operation1;
+  head?: Operation1;
+  patch?: Operation1;
+  trace?: Operation1;
   /**
    * This interface was referenced by `PathItem`'s JSON-Schema definition
    * via the `patternProperty` "^x-".
@@ -437,6 +771,26 @@ export interface CallbacksOrReference {
 }
 export interface SecurityRequirement {
   [k: string]: string[];
+}
+export interface Operation1 {
+  tags?: string[];
+  summary?: string;
+  description?: string;
+  externalDocs?: ExternalDocumentation;
+  operationId?: string;
+  parameters?: ParameterOrReference[];
+  requestBody?: RequestBodyOrReference;
+  responses?: Responses;
+  callbacks?: {
+    [k: string]: CallbacksOrReference;
+  };
+  security?: SecurityRequirement[];
+  servers?: Server[];
+  /**
+   * This interface was referenced by `Operation1`'s JSON-Schema definition
+   * via the `patternProperty` "^x-".
+   */
+  [k: string]: unknown;
 }
 export interface PathItemOrReference {
   [k: string]: unknown;
