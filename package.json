@@ -36,10 +36,10 @@
     "postpublish": "git push origin && git push origin -f --tags"
   },
   "dependencies": {
-    "@platformatic/foundation": "^3.0.0",
-    "@platformatic/service": "^3.0.0",
+    "@platformatic/foundation": "^3.0.2",
+    "@platformatic/service": "^3.0.2",
     "amqplib": "^0.10.4",
-    "fastify-plugin": "^5.0.0",
+    "fastify-plugin": "^5.0.1",
     "undici": "^7.0.0"
   },
   "devDependencies": {
