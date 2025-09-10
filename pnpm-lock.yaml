@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@platformatic/foundation':
         specifier: ^3.0.2
-        version: 3.0.3
+        version: 3.0.6
       '@platformatic/service':
         specifier: ^3.0.2
         version: 3.0.3(typescript@5.9.2)
@@ -445,6 +445,10 @@ packages:
 
   '@platformatic/foundation@3.0.3':
     resolution: {integrity: sha512-kM9rsB4qJLwfdxVk7RFuJQQCDSiRxs7ILRK1OCioRY732c3un5W7qSRlpMzVKafyW2W42xVV9VrzRM92LNjqzg==}
+    engines: {node: '>=22.18.0'}
+
+  '@platformatic/foundation@3.0.6':
+    resolution: {integrity: sha512-BeJhLOhI68+27o3WjXNx+HnS5EvSDJwjomZ70bYreD2fmQVX6g7H1wGPPBBHDzeNMpxj6nK6VhME8vDg7MtD7A==}
     engines: {node: '>=22.18.0'}
 
   '@platformatic/generators@3.0.3':
@@ -2009,6 +2013,10 @@ packages:
     resolution: {integrity: sha512-d1XorUQ7sSKqVcYdXuEYs2h1LKxejSorMEJ76XoZ0pPDf8VzJMe7GlPXpMBZeQ9gE4ZPIp5uGD+5Nw7scxiigg==}
     hasBin: true
 
+  pino@9.9.5:
+    resolution: {integrity: sha512-d1s98p8/4TfYhsJ09r/Azt30aYELRi6NNnZtEbqFw6BoGsdPVf5lKNK3kUwH8BmJJfpTLNuicjUQjaMbd93dVg==}
+    hasBin: true
+
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
     engines: {node: '>= 0.4'}
@@ -3093,6 +3101,25 @@ snapshots:
       json5: 2.2.3
       leven: 3.1.0
       pino: 9.9.4
+      pino-pretty: 13.1.1
+      semver: 7.7.2
+      undici: 7.11.0
+      yaml: 2.8.1
+
+  '@platformatic/foundation@3.0.6':
+    dependencies:
+      '@fastify/deepmerge': 2.0.2
+      '@fastify/error': 4.2.0
+      '@iarna/toml': 2.2.5
+      '@watchable/unpromise': 1.0.2
+      ajv: 8.17.1
+      boring-name-generator: 1.0.3
+      colorette: 2.0.20
+      dotenv: 16.6.1
+      fast-json-patch: 3.1.1
+      json5: 2.2.3
+      leven: 3.1.0
+      pino: 9.9.5
       pino-pretty: 13.1.1
       semver: 7.7.2
       undici: 7.11.0
@@ -4942,6 +4969,20 @@ snapshots:
   pino-std-serializers@7.0.0: {}
 
   pino@9.9.4:
+    dependencies:
+      atomic-sleep: 1.0.0
+      fast-redact: 3.5.0
+      on-exit-leak-free: 2.1.2
+      pino-abstract-transport: 2.0.0
+      pino-std-serializers: 7.0.0
+      process-warning: 5.0.0
+      quick-format-unescaped: 4.0.4
+      real-require: 0.2.0
+      safe-stable-stringify: 2.5.0
+      sonic-boom: 4.2.0
+      thread-stream: 3.1.0
+
+  pino@9.9.5:
     dependencies:
       atomic-sleep: 1.0.0
       fast-redact: 3.5.0
