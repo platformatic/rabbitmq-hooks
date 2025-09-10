@@ -22,7 +22,7 @@ importers:
         version: 5.0.1
       undici:
         specifier: ^7.0.0
-        version: 7.15.0
+        version: 7.16.0
     devDependencies:
       cleaner-spec-reporter:
         specifier: ^0.5.0
@@ -2432,8 +2432,8 @@ packages:
     resolution: {integrity: sha512-heTSIac3iLhsmZhUCjyS3JQEkZELateufzZuBaVM5RHXdSBMb1LPMQf5x+FH7qjsZYDP0ttAc3nnVpUB+wYbOg==}
     engines: {node: '>=20.18.1'}
 
-  undici@7.15.0:
-    resolution: {integrity: sha512-7oZJCPvvMvTd0OlqWsIxTuItTpJBpU1tcbVl24FMn3xt3+VSunwUasmfPJRE57oNO1KsZ4PgA1xTdAX4hq8NyQ==}
+  undici@7.16.0:
+    resolution: {integrity: sha512-QEg3HPMll0o3t2ourKwOeUAZ159Kn9mx5pnzHRQO8+Wixmh88YdZRiIwat0iNzNNXn0yoEtXJqFpyW7eM8BV7g==}
     engines: {node: '>=20.18.1'}
 
   unicorn-magic@0.3.0:
@@ -3072,7 +3072,7 @@ snapshots:
       pino-abstract-transport: 2.0.0
       semver: 7.7.2
       split2: 4.2.0
-      undici: 7.15.0
+      undici: 7.16.0
       ws: 8.18.3
     transitivePeerDependencies:
       - bufferutil
@@ -3106,7 +3106,7 @@ snapshots:
       execa: 9.6.0
       fastify: 5.6.0
       pino: 9.9.4
-      undici: 7.15.0
+      undici: 7.16.0
 
   '@platformatic/http-metrics@0.2.1':
     dependencies:
@@ -3166,7 +3166,7 @@ snapshots:
       pino-pretty: 13.1.1
       rfdc: 1.4.1
       semgrator: 0.3.0
-      undici: 7.15.0
+      undici: 7.16.0
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -5429,7 +5429,7 @@ snapshots:
 
   undici@7.11.0: {}
 
-  undici@7.15.0: {}
+  undici@7.16.0: {}
 
   unicorn-magic@0.3.0: {}
 
