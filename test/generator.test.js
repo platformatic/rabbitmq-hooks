@@ -145,7 +145,7 @@ test('should generate a stackable app', async t => {
 
   deepEqual(stackableConfig, {
     $schema: `https://schemas.platformatic.dev/@platformatic/rabbitmq-hooks/${packageJson.version}.json`,
-    module: `${packageJson.name}@${packageJson.version}`,
+    module: packageJson.name,
     server: {
       hostname: '{PLT_SERVER_HOSTNAME}',
       port: '{PORT}',
