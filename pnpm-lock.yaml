@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@platformatic/foundation':
         specifier: ^3.0.2
-        version: 3.2.0
+        version: 3.2.1
       '@platformatic/service':
         specifier: ^3.0.2
         version: 3.2.0(typescript@5.9.2)
@@ -445,6 +445,10 @@ packages:
 
   '@platformatic/foundation@3.2.0':
     resolution: {integrity: sha512-3cWmtIqw69c1sD76PrR7NveeFRIvXjkYXDpm1nP3Ghf5ORviNEixQ/R1eIev5uO37jqp8CjXMNSDgIikuyPYeA==}
+    engines: {node: '>=22.19.0'}
+
+  '@platformatic/foundation@3.2.1':
+    resolution: {integrity: sha512-tANx3zWz7rJAWOyOOg2t6TTs7W0ftvPSNrHJdBqzYVPVZzgLlvCB9HI2SPnsmjXI1xdbQXcgS21LP//C6OpU1A==}
     engines: {node: '>=22.19.0'}
 
   '@platformatic/generators@3.2.0':
@@ -3073,6 +3077,25 @@ snapshots:
       - utf-8-validate
 
   '@platformatic/foundation@3.2.0':
+    dependencies:
+      '@fastify/deepmerge': 2.0.2
+      '@fastify/error': 4.2.0
+      '@iarna/toml': 2.2.5
+      '@watchable/unpromise': 1.0.2
+      ajv: 8.17.1
+      boring-name-generator: 1.0.3
+      colorette: 2.0.20
+      dotenv: 16.6.1
+      fast-json-patch: 3.1.1
+      json5: 2.2.3
+      leven: 3.1.0
+      pino: 9.9.5
+      pino-pretty: 13.1.1
+      semver: 7.7.2
+      undici: 7.11.0
+      yaml: 2.8.1
+
+  '@platformatic/foundation@3.2.1':
     dependencies:
       '@fastify/deepmerge': 2.0.2
       '@fastify/error': 4.2.0
