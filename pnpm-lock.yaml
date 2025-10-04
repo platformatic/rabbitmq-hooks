@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@platformatic/foundation':
         specifier: ^3.0.2
-        version: 3.7.0
+        version: 3.7.1
       '@platformatic/service':
         specifier: ^3.0.2
         version: 3.7.0(typescript@5.9.2)
@@ -445,6 +445,10 @@ packages:
 
   '@platformatic/foundation@3.7.0':
     resolution: {integrity: sha512-4qxcuVDHFJj9P8xzRvGGZC601zcgs0xDGNHCG8gKrugHH4xXZ3QF86Y84WwuHtCQX+sU2G6Jw6jiqXvN+YeLxQ==}
+    engines: {node: '>=22.19.0'}
+
+  '@platformatic/foundation@3.7.1':
+    resolution: {integrity: sha512-PBSU4aYvdBg6C0gotfxbBUrir7u30kuT+T9NXDkx/Kff62tgmKkrI87an5x9NVmSQGWvsJ6GWL3Bu5nNHGMVsQ==}
     engines: {node: '>=22.19.0'}
 
   '@platformatic/generators@3.7.0':
@@ -2241,6 +2245,9 @@ packages:
   slow-redact@0.3.0:
     resolution: {integrity: sha512-cf723wn9JeRIYP9tdtd86GuqoR5937u64Io+CYjlm2i7jvu7g0H+Cp0l0ShAf/4ZL+ISUTVT+8Qzz7RZmp9FjA==}
 
+  slow-redact@0.3.1:
+    resolution: {integrity: sha512-NvFvl1GuLZNW4U046Tfi8b26zXo8aBzgCAS2f7yVJR/fArN93mOqSA99cB9uITm92ajSz01bsu1K7SCVVjIMpQ==}
+
   sonic-boom@4.2.0:
     resolution: {integrity: sha512-INb7TM37/mAcsGmc9hyyI6+QR3rR1zVRu36B0NeGXKnOOLiZOfER5SA+N7X7k3yUYRzLWafduTDvJAfDswwEww==}
 
@@ -3076,6 +3083,25 @@ snapshots:
       - utf-8-validate
 
   '@platformatic/foundation@3.7.0':
+    dependencies:
+      '@fastify/deepmerge': 2.0.2
+      '@fastify/error': 4.2.0
+      '@iarna/toml': 2.2.5
+      '@watchable/unpromise': 1.0.2
+      ajv: 8.17.1
+      boring-name-generator: 1.0.3
+      colorette: 2.0.20
+      dotenv: 16.6.1
+      fast-json-patch: 3.1.1
+      json5: 2.2.3
+      leven: 3.1.0
+      pino: 9.13.1
+      pino-pretty: 13.1.1
+      semver: 7.7.2
+      undici: 7.11.0
+      yaml: 2.8.1
+
+  '@platformatic/foundation@3.7.1':
     dependencies:
       '@fastify/deepmerge': 2.0.2
       '@fastify/error': 4.2.0
@@ -4954,7 +4980,7 @@ snapshots:
       quick-format-unescaped: 4.0.4
       real-require: 0.2.0
       safe-stable-stringify: 2.5.0
-      slow-redact: 0.3.0
+      slow-redact: 0.3.1
       sonic-boom: 4.2.0
       thread-stream: 3.1.0
 
@@ -5218,6 +5244,8 @@ snapshots:
       safe-stable-stringify: 2.5.0
 
   slow-redact@0.3.0: {}
+
+  slow-redact@0.3.1: {}
 
   sonic-boom@4.2.0:
     dependencies:
