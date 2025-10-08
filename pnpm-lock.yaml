@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@platformatic/foundation':
         specifier: ^3.0.2
-        version: 3.8.0
+        version: 3.9.0
       '@platformatic/service':
         specifier: ^3.0.2
         version: 3.8.0(typescript@5.9.3)
@@ -445,6 +445,10 @@ packages:
 
   '@platformatic/foundation@3.8.0':
     resolution: {integrity: sha512-1Ku8nakggS0jcrOvAzAoV/4kYhdz2AryIQe7Oh8XM3RDzM7TfXgzgrERx6SK7+5A/kl4kHxFMdztpWQOvzUDcQ==}
+    engines: {node: '>=22.19.0'}
+
+  '@platformatic/foundation@3.9.0':
+    resolution: {integrity: sha512-/6nuxZ5shWnknBpqP0BXOfklp3eTDuTenQOMr2DANKWgDvsp87SmVjNse3xcXGAl2UxWZ8qWw4MLlPOoH9Zbew==}
     engines: {node: '>=22.19.0'}
 
   '@platformatic/generators@3.8.0':
@@ -2187,6 +2191,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  semver@7.7.3:
+    resolution: {integrity: sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   set-cookie-parser@2.7.1:
     resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==}
 
@@ -3072,7 +3081,7 @@ snapshots:
       fast-json-patch: 3.1.1
       pino: 9.13.1
       pino-abstract-transport: 2.0.0
-      semver: 7.7.2
+      semver: 7.7.3
       split2: 4.2.0
       undici: 7.16.0
       ws: 8.18.3
@@ -3096,7 +3105,26 @@ snapshots:
       leven: 3.1.0
       pino: 9.13.1
       pino-pretty: 13.1.1
-      semver: 7.7.2
+      semver: 7.7.3
+      undici: 7.11.0
+      yaml: 2.8.1
+
+  '@platformatic/foundation@3.9.0':
+    dependencies:
+      '@fastify/deepmerge': 2.0.2
+      '@fastify/error': 4.2.0
+      '@iarna/toml': 2.2.5
+      '@watchable/unpromise': 1.0.2
+      ajv: 8.17.1
+      boring-name-generator: 1.0.3
+      colorette: 2.0.20
+      dotenv: 16.6.1
+      fast-json-patch: 3.1.1
+      json5: 2.2.3
+      leven: 3.1.0
+      pino: 9.13.1
+      pino-pretty: 13.1.1
+      semver: 7.7.3
       undici: 7.11.0
       yaml: 2.8.1
 
@@ -3369,7 +3397,7 @@ snapshots:
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.7.2
+      semver: 7.7.3
       ts-api-utils: 2.1.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -3975,7 +4003,7 @@ snapshots:
   eslint-compat-utils@0.5.1(eslint@9.37.0):
     dependencies:
       eslint: 9.37.0
-      semver: 7.7.2
+      semver: 7.7.3
 
   eslint-import-context@0.1.9(unrs-resolver@1.11.1):
     dependencies:
@@ -4015,7 +4043,7 @@ snapshots:
       eslint-import-context: 0.1.9(unrs-resolver@1.11.1)
       is-glob: 4.0.3
       minimatch: 10.0.3
-      semver: 7.7.2
+      semver: 7.7.3
       stable-hash-x: 0.2.0
       unrs-resolver: 1.11.1
     optionalDependencies:
@@ -4033,7 +4061,7 @@ snapshots:
       globals: 15.15.0
       globrex: 0.1.2
       ignore: 5.3.2
-      semver: 7.7.2
+      semver: 7.7.3
       ts-declaration-location: 1.0.7(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
@@ -4471,7 +4499,7 @@ snapshots:
 
   is-bun-module@2.0.0:
     dependencies:
-      semver: 7.7.2
+      semver: 7.7.3
 
   is-callable@1.2.7: {}
 
@@ -5138,11 +5166,13 @@ snapshots:
     dependencies:
       abstract-logging: 2.0.1
       rfdc: 1.4.1
-      semver: 7.7.2
+      semver: 7.7.3
 
   semver@6.3.1: {}
 
   semver@7.7.2: {}
+
+  semver@7.7.3: {}
 
   set-cookie-parser@2.7.1: {}
 
