@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@platformatic/foundation':
         specifier: ^3.0.2
-        version: 3.9.0
+        version: 3.10.0
       '@platformatic/service':
         specifier: ^3.0.2
         version: 3.9.0(typescript@5.9.3)
@@ -441,6 +441,10 @@ packages:
 
   '@platformatic/basic@3.9.0':
     resolution: {integrity: sha512-bI4Ld6po0EdluMDDCxeXhtlekEW6+2dJGsnvI20rn9kJzBb8o0LGcz76Y0aki0Zpf7KOSl+b3lNuYw0ZDOrgrQ==}
+    engines: {node: '>=22.19.0'}
+
+  '@platformatic/foundation@3.10.0':
+    resolution: {integrity: sha512-ZVM2Ng7orKyhxvRbMHY+WE/tTEAj2Dy3pNwHJwEH8/Kd2nSwf5gNgBNmSW2rdIeLZwn9QhWhdlxoIWY8Ev26fQ==}
     engines: {node: '>=22.19.0'}
 
   '@platformatic/foundation@3.9.0':
@@ -3085,6 +3089,25 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+
+  '@platformatic/foundation@3.10.0':
+    dependencies:
+      '@fastify/deepmerge': 2.0.2
+      '@fastify/error': 4.2.0
+      '@iarna/toml': 2.2.5
+      '@watchable/unpromise': 1.0.2
+      ajv: 8.17.1
+      boring-name-generator: 1.0.3
+      colorette: 2.0.20
+      dotenv: 16.6.1
+      fast-json-patch: 3.1.1
+      json5: 2.2.3
+      leven: 3.1.0
+      pino: 9.13.1
+      pino-pretty: 13.1.1
+      semver: 7.7.3
+      undici: 7.11.0
+      yaml: 2.8.1
 
   '@platformatic/foundation@3.9.0':
     dependencies:
