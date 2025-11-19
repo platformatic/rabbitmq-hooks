@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@platformatic/foundation':
         specifier: ^3.0.2
-        version: 3.22.0
+        version: 3.23.0
       '@platformatic/service':
         specifier: ^3.0.2
         version: 3.21.0(typescript@5.9.3)
@@ -485,8 +485,8 @@ packages:
     resolution: {integrity: sha512-dS1HHpdb9v0vILaYTpVx7tCQZQaQGhI2Ep1N3hIXv7o7MgGGhqJw9yxm+tnFnecQk5C6LaGtOcAJpzNRKRGqWA==}
     engines: {node: '>=22.19.0'}
 
-  '@platformatic/foundation@3.22.0':
-    resolution: {integrity: sha512-+LwXG6xyH2itqmOi8o2rFyZiCTE56rtZ7J2fTZKjjvsflA5So0rYIofSM9dpyMshcD+X7025HSDq6mO0vGeslg==}
+  '@platformatic/foundation@3.23.0':
+    resolution: {integrity: sha512-pnbKWSRwORaOtRn19cnOl0fnQX7spGR1iHfIgdHl827hVAlEeHyv2WBMC2F8YqdEMH8yZlLSJAlU4MbTu6y/3Q==}
     engines: {node: '>=22.19.0'}
 
   '@platformatic/generators@3.21.0':
@@ -3286,7 +3286,7 @@ snapshots:
       undici: 7.11.0
       yaml: 2.8.1
 
-  '@platformatic/foundation@3.22.0':
+  '@platformatic/foundation@3.23.0':
     dependencies:
       '@fastify/deepmerge': 2.0.2
       '@fastify/error': 4.2.0
