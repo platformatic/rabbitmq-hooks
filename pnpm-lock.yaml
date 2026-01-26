@@ -32,7 +32,7 @@ importers:
         version: 9.39.2
       fastify:
         specifier: ^5.3.2
-        version: 5.7.1
+        version: 5.7.2
       json-schema-to-typescript:
         specifier: ^15.0.4
         version: 15.0.4
@@ -1303,8 +1303,8 @@ packages:
   fastify-plugin@5.1.0:
     resolution: {integrity: sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==}
 
-  fastify@5.7.1:
-    resolution: {integrity: sha512-ZW7S4fxlZhE+tYWVokFzjh+i56R+buYKNGhrVl6DtN8sxkyMEzpJnzvO8A/ZZrsg5w6X37u6I4EOQikYS5DXpA==}
+  fastify@5.7.2:
+    resolution: {integrity: sha512-dBJolW+hm6N/yJVf6J5E1BxOBNkuXNl405nrfeR8SpvGWG3aCC2XDHyiFBdow8Win1kj7sjawQc257JlYY6M/A==}
 
   fastparallel@2.4.1:
     resolution: {integrity: sha512-qUmhxPgNHmvRjZKBFUNI0oZuuH9OlSIOXmJ98lhKPxMZZ7zS/Fi0wRHOihDSz0R1YiIOjxzOY4bq65YTcdBi2Q==}
@@ -3075,7 +3075,7 @@ snapshots:
       '@platformatic/foundation': 3.31.0
       change-case-all: 2.1.0
       execa: 9.6.1
-      fastify: 5.7.1
+      fastify: 5.7.2
       pino: 9.14.0
       undici: 7.19.1
 
@@ -3135,7 +3135,7 @@ snapshots:
       env-schema: 6.1.0
       execa: 9.6.1
       fast-json-patch: 3.1.1
-      fastify: 5.7.1
+      fastify: 5.7.2
       fastify-plugin: 5.1.0
       graphql: 16.12.0
       help-me: 5.0.0
@@ -4172,7 +4172,7 @@ snapshots:
 
   fastify-plugin@5.1.0: {}
 
-  fastify@5.7.1:
+  fastify@5.7.2:
     dependencies:
       '@fastify/ajv-compiler': 4.0.5
       '@fastify/error': 4.2.0
