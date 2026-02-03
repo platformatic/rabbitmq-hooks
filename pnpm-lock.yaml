@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@platformatic/foundation':
         specifier: ^3.0.2
-        version: 3.35.1
+        version: 3.36.0
       '@platformatic/service':
         specifier: ^3.0.2
         version: 3.34.1(typescript@5.9.3)
@@ -441,8 +441,8 @@ packages:
     resolution: {integrity: sha512-8gu/ENlOR4Qpeq2iEjC8au/UtgBabliUfqpJ6w2vWzWJFpdMV72Tmkk0ouUZpIPslpK9ECi2QQMiFdL7WJ5pfQ==}
     engines: {node: '>=22.19.0'}
 
-  '@platformatic/foundation@3.35.1':
-    resolution: {integrity: sha512-fjEcxEAbWBE/xYSwbWaDXMofI+nOrWuiZyx3l6W1GdSo9C55ac2WCNnTh3VFMoBN3gRmoohw/krT3meN002W5A==}
+  '@platformatic/foundation@3.36.0':
+    resolution: {integrity: sha512-sYP0/ggdGDcFN+/w6jBnGUo54M6ZLfRgpZ7YnNYC28CcYE6yG7vM8wnq4iODDlpv1Dg2ngtcS6JSL5LHDZtuzQ==}
     engines: {node: '>=22.19.0'}
 
   '@platformatic/generators@3.34.1':
@@ -3073,7 +3073,7 @@ snapshots:
       undici: 7.18.2
       yaml: 2.8.2
 
-  '@platformatic/foundation@3.35.1':
+  '@platformatic/foundation@3.36.0':
     dependencies:
       '@fastify/deepmerge': 2.0.2
       '@fastify/error': 4.2.0
@@ -3082,6 +3082,7 @@ snapshots:
       ajv: 8.17.1
       boring-name-generator: 1.0.3
       colorette: 2.0.20
+      debug: 4.4.3
       fast-json-patch: 3.1.1
       json5: 2.2.3
       leven: 3.1.0
@@ -3090,6 +3091,8 @@ snapshots:
       semver: 7.7.3
       undici: 7.18.2
       yaml: 2.8.2
+    transitivePeerDependencies:
+      - supports-color
 
   '@platformatic/generators@3.34.1':
     dependencies:
