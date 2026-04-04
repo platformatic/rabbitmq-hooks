@@ -21,8 +21,8 @@ importers:
         specifier: ^5.0.1
         version: 5.1.0
       undici:
-        specifier: ^7.0.0
-        version: 7.24.7
+        specifier: ^8.0.0
+        version: 8.0.2
     devDependencies:
       cleaner-spec-reporter:
         specifier: ^0.5.0
@@ -2243,6 +2243,10 @@ packages:
   undici@7.24.7:
     resolution: {integrity: sha512-H/nlJ/h0ggGC+uRL3ovD+G0i4bqhvsDOpbDv7At5eFLlj2b41L8QliGbnl2H7SnDiYhENphh1tQFJZf+MyfLsQ==}
     engines: {node: '>=20.18.1'}
+
+  undici@8.0.2:
+    resolution: {integrity: sha512-B9MeU5wuFhkFAuNeA19K2GDFcQXZxq33fL0nRy2Aq30wdufZbyyvxW3/ChaeipXVfy/wUweZyzovQGk39+9k2w==}
+    engines: {node: '>=22.19.0'}
 
   unicorn-magic@0.3.0:
     resolution: {integrity: sha512-+QBBXBCvifc56fsbuxZQ6Sic3wqqc3WWaqxs58gvJrcOuN83HGTCwz3oS5phzU9LthRNE9VrJCFCLUgHeeFnfA==}
@@ -5083,6 +5087,8 @@ snapshots:
   undici@7.24.0: {}
 
   undici@7.24.7: {}
+
+  undici@8.0.2: {}
 
   unicorn-magic@0.3.0: {}
 
