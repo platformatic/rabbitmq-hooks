@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@platformatic/foundation':
         specifier: ^3.0.2
-        version: 3.50.0
+        version: 3.51.0
       '@platformatic/service':
         specifier: ^3.0.2
         version: 3.50.0(typescript@6.0.2)
@@ -415,6 +415,10 @@ packages:
 
   '@platformatic/foundation@3.50.0':
     resolution: {integrity: sha512-LoMaQZLNU6RbAjdTqBmy5xeYGFUOFN9CbaADMDk18jDFLmH6TrhTw2BWMg0GiHNWObHSQQhS/zEZ1NXATK6/rQ==}
+    engines: {node: '>=22.19.0'}
+
+  '@platformatic/foundation@3.51.0':
+    resolution: {integrity: sha512-XiCysKu/9LkHuecI3DTAALO1eR1StIEuTp5wkWoMxRhv7cYzbx9eW/6XOQD3yuiqyL6ZHEe6HU6Swl6Rk/8UbA==}
     engines: {node: '>=22.19.0'}
 
   '@platformatic/generators@3.50.0':
@@ -1091,8 +1095,8 @@ packages:
     resolution: {integrity: sha512-9Be3ZoN4LmYR90tUoVu2te2BsbzHfhJyfEiAVfz7N5/zv+jduIfLrV2xdQXOHbaD6KgpGdO9PRPM1Y4Q9QkPkA==}
     engines: {node: ^18.19.0 || >=20.5.0}
 
-  fast-copy@4.0.2:
-    resolution: {integrity: sha512-ybA6PDXIXOXivLJK/z9e+Otk7ve13I4ckBvGO5I2RRmBU1gMHLVDJYEuJYhGwez7YNlYji2M2DvVU+a9mSFDlw==}
+  fast-copy@4.0.3:
+    resolution: {integrity: sha512-58apWr0GUiDFM8+3afrO6eYwJBn9ZAhDOzG3L+/9llab/haCARS2UIfffmOurYLwbgDRs8n0rfr6qAAPEAuAQw==}
 
   fast-decode-uri-component@1.0.1:
     resolution: {integrity: sha512-WKgKWg5eUxvRZGwW8FvfbaH7AXSh2cL+3j5fMGzUMCxWBJ3dV3a7Wz8y2f/uQ0e3B6WmodD3oS54jTQ9HVTIIg==}
@@ -2865,6 +2869,27 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@platformatic/foundation@3.51.0':
+    dependencies:
+      '@fastify/deepmerge': 2.0.2
+      '@fastify/error': 4.2.0
+      '@iarna/toml': 2.2.5
+      '@watchable/unpromise': 1.0.2
+      ajv: 8.18.0
+      boring-name-generator: 1.0.3
+      colorette: 2.0.20
+      debug: 4.4.3
+      fast-json-patch: 3.1.1
+      json5: 2.2.3
+      leven: 3.1.0
+      pino: 9.14.0
+      pino-pretty: 13.1.3
+      semver: 7.7.4
+      undici: 7.24.0
+      yaml: 2.8.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@platformatic/generators@3.50.0':
     dependencies:
       '@fastify/error': 4.2.0
@@ -3813,7 +3838,7 @@ snapshots:
       strip-final-newline: 4.0.0
       yoctocolors: 2.1.2
 
-  fast-copy@4.0.2: {}
+  fast-copy@4.0.3: {}
 
   fast-decode-uri-component@1.0.1: {}
 
@@ -4579,7 +4604,7 @@ snapshots:
     dependencies:
       colorette: 2.0.20
       dateformat: 4.6.3
-      fast-copy: 4.0.2
+      fast-copy: 4.0.3
       fast-safe-stringify: 2.1.1
       help-me: 5.0.0
       joycon: 3.1.1
