@@ -39,7 +39,7 @@
   "dependencies": {
     "@platformatic/foundation": "^3.0.2",
     "@platformatic/service": "^3.0.2",
-    "amqplib": "^0.10.4",
+    "amqplib": "^1.0.0",
     "fastify-plugin": "^5.0.1",
     "undici": "^7.0.0"
   },
