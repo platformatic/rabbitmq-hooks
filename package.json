@@ -41,7 +41,7 @@
     "@platformatic/service": "^3.0.2",
     "amqplib": "^0.10.4",
     "fastify-plugin": "^5.0.1",
-    "undici": "^7.0.0"
+    "undici": "^8.0.0"
   },
   "devDependencies": {
     "cleaner-spec-reporter": "^0.5.0",
